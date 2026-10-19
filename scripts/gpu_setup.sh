@@ -5,10 +5,14 @@ set -euo pipefail
 REPO_URL=${REPO_URL:-https://github.com/Jihan-5/AI-Control-Activation-Based-Monitoring}
 BRANCH=${BRANCH:-claude/brave-goodall-7hssnr}
 
-if [ ! -d AI-Control-Activation-Based-Monitoring ]; then
-  git clone -b "$BRANCH" "$REPO_URL"   # private repo: use `gh auth login` or a token URL first
+# Run from inside a clone (bash scripts/gpu_setup.sh) or standalone (clones next to you).
+HERE=$(cd "$(dirname "$0")/.." && pwd)
+if [ -f "$HERE/pyproject.toml" ] && grep -q '^name = "irmon"' "$HERE/pyproject.toml"; then
+  cd "$HERE"
+else
+  [ -d AI-Control-Activation-Based-Monitoring ] || git clone -b "$BRANCH" "$REPO_URL"   # private repo: `gh auth login` first
+  cd AI-Control-Activation-Based-Monitoring
 fi
-cd AI-Control-Activation-Based-Monitoring
 
 python3 -m venv .venv
 source .venv/bin/activate

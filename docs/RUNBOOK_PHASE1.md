@@ -20,11 +20,11 @@ phase 1 touches a test split.
 
 ```bash
 # 1. Setup (~15-30 min): clone, venv, install, GPU check, offline tests, pin model revision
-curl -fsSL https://raw.githubusercontent.com/Jihan-5/AI-Control-Activation-Based-Monitoring/claude/brave-goodall-7hssnr/scripts/gpu_setup.sh -o gpu_setup.sh
-bash gpu_setup.sh            # or: clone the branch yourself, then `bash scripts/gpu_setup.sh` from its parent dir
-
-# 2. Phase 1 (~3.5-4.5 h). Runs in tmux so a dropped SSH session does not kill it.
+git clone -b claude/brave-goodall-7hssnr https://github.com/Jihan-5/AI-Control-Activation-Based-Monitoring
 cd AI-Control-Activation-Based-Monitoring
+bash scripts/gpu_setup.sh
+
+# 2. Phase 1 (~3.5-4.5 h on A100, ~1.5-2 h on H100). Runs in tmux so a dropped SSH session does not kill it.
 tmux new -s phase1 'bash scripts/run_phase1.sh; bash'
 #   detach: Ctrl-b d      re-attach: tmux attach -t phase1
 #   progress: tail -f runs/phase1_logs/*.log

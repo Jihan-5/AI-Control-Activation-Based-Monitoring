@@ -51,12 +51,12 @@ cd AI-Control-Activation-Based-Monitoring
 python3 -m venv .venv && source .venv/bin/activate
 pip install torch --index-url https://download.pytorch.org/whl/cpu   # CPU torch (macOS: plain `pip install torch`)
 pip install -e ".[model,dev]"
-pytest -q                          # ~211 tests, ~3-4 min
+pytest -q                          # 210 tests, ~3-4 min
 irmon smoke                        # whole pipeline on the synthetic simulator, ~2 min
 
 # --- the H100 (the real study) ---
-bash scripts/gpu_setup.sh                                   # ~20 min
-cd AI-Control-Activation-Based-Monitoring
+git clone -b claude/brave-goodall-7hssnr https://github.com/Jihan-5/AI-Control-Activation-Based-Monitoring
+cd AI-Control-Activation-Based-Monitoring && bash scripts/gpu_setup.sh   # ~20 min
 tmux new -s run 'bash scripts/run_phase1.sh; bash'          # ~1.5-2 h -> prints D1/D2 tables
 # read the tables (section 3.5), make the pre-lock decision (section 3.6), then:
 PRIMARY_POP=familiar bash scripts/run_phase2.sh             # ~1.5 h per checkpoint (3 checkpoints by default)
@@ -325,13 +325,13 @@ result. Everything after that strengthens it.
 ```bash
 ssh <your-h100>
 sudo apt-get install -y tmux git          # usually preinstalled
-gh auth login                             # or use a token URL if the repo is private
-curl -fsSL https://raw.githubusercontent.com/Jihan-5/AI-Control-Activation-Based-Monitoring/claude/brave-goodall-7hssnr/scripts/gpu_setup.sh -o gpu_setup.sh
-bash gpu_setup.sh
+gh auth login                             # only if the repo is private (or use a token URL)
+git clone -b claude/brave-goodall-7hssnr https://github.com/Jihan-5/AI-Control-Activation-Based-Monitoring
 cd AI-Control-Activation-Based-Monitoring
+bash scripts/gpu_setup.sh
 ```
 
-`gpu_setup.sh` clones the branch, creates `.venv`, installs torch + the package, checks the GPU
+`gpu_setup.sh` (run inside the clone; run standalone it clones the branch first) creates `.venv`, installs torch + the package, checks the GPU
 (prints name, memory, bf16 support), **runs the offline test suite** (stop if it fails), pins the
 model's exact commit, and pre-downloads Qwen2.5-1.5B.
 
