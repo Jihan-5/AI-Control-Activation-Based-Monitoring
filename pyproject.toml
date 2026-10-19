@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "irmon"
+version = "0.1.0"
+description = "Intervention-response monitoring under benign distribution shift (AI-control research code; no results measured yet)."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Jihan Mankani" }]
+dependencies = [
+  "numpy>=1.26",
+  "scipy>=1.11",
+  "scikit-learn>=1.4",
+  "pandas>=2.0",
+  "pydantic>=2.5",
+  "pyyaml>=6.0",
+  "matplotlib>=3.8",
+]
+
+[project.optional-dependencies]
+# Real-model runs (activation extraction, LoRA organisms, white-box attacks).
+model = [
+  "torch>=2.3",
+  "transformers>=4.46",
+  "accelerate>=0.33",
+  "peft>=0.12",
+  "safetensors>=0.4",
+  "huggingface_hub>=0.24",
+]
+dev = ["pytest>=8.0", "ruff>=0.5"]
+
+[project.scripts]
+irmon = "irmon.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+markers = [
+  "torch: requires torch + transformers (skipped automatically when unavailable)",
+  "slow: longer end-to-end tests",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "NPY"]
+ignore = ["E501", "B905", "UP038"]

@@ -1,0 +1,18 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+# Large run outputs: activations, detector objects, model weights.
+runs/
+cache/
+*.safetensors
+*.bin
+*.pt
+wandb/
+.DS_Store
