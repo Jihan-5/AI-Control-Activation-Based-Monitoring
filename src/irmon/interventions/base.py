@@ -24,7 +24,7 @@ from __future__ import annotations
 
 import random
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any
 
 from irmon.envs.base import Environment
@@ -79,6 +79,11 @@ class Intervention(ABC):
         raise ValueError(f"unknown intervention kind {self.kind!r}")
 
     def __call__(self, env: Environment, task: Any, rng: random.Random, max_tries: int = 8) -> EditResult:
+        if hasattr(task, "latent_task"):
+            # Presentation wrapper (e.g. attack framing): edit the latent task,
+            # validate against the inner environment, keep the wrapper.
+            res = self.__call__(getattr(env, "inner", env), task.latent_task, rng, max_tries)
+            return replace(res, task=task.rewrap(res.task))
         reason = "not attempted"
         changed = False
         for _ in range(max_tries):

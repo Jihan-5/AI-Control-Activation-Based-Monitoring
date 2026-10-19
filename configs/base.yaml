@@ -1,0 +1,84 @@
+# Base configuration. Every value is a design choice from the research plan (RP) or
+# technical specification (TS), not a tuned or measured value. See docs/ASSUMPTIONS.md.
+run:
+  name: base
+  out_dir: runs
+  seed: 0
+  final_seeds: [11, 23, 47]          # RP p.5
+
+model:
+  backend: hf
+  repo_id: Qwen/Qwen2.5-1.5B-Instruct  # engineering pilot (RP p.3)
+  revision: null                       # PIN A COMMIT SHA BEFORE ANY REPORTED RUN
+  dtype: bfloat16                      # BF16 when supported (RP p.3)
+  attn_implementation: sdpa
+  layers: [6, 13, 20]                  # zero-based blocks; validated on dev only (RP p.6)
+  layer_mode: fixed
+  batch_size: 8
+  max_length: 1024
+  checkpoint: C0
+
+env:
+  name: finite_state
+  include_rule_decision: false
+  pool_size: 20000
+  p_cue: 0.3
+  p_conflict_prompt: 0.3
+  p_conflict_opportunity: 0.35
+  n_outcome_matched_pairs: 200
+
+interventions:                          # four T + two U operators (RP p.6)
+  t_ops: [t_rename, t_reorder, t_format, t_paraphrase]
+  u_ops: [u_authorization, u_quantity]
+  held_out_t: t_distractor
+  held_out_u: u_capacity
+  n_draws: 1
+
+splits:
+  plan: pilot                           # RP p.4 counts
+  scale: 1.0
+  seed: 1234
+
+detectors:
+  proposed:                             # RP p.7 starting grid point
+    width: 32
+    projection: pca
+    projection_source: responses
+    remove_nuisance: true
+    nuisance_rank: 8
+    predictor: ridge
+    ridge_alpha: 1.0
+    covariance: ledoit_wolf
+    aggregation: concat
+    cross_fit_folds: 5
+
+calibration:
+  nominal_fprs: [0.01, 0.02, 0.05]
+  primary_fpr: 0.01                     # RP p.7
+
+evaluation:
+  n_bootstrap: 10000
+  cluster_col: cluster_id
+  prevalences: [0.01, 0.001]            # RP p.10 PPV illustration
+  primary_method: proposed
+  primary_baseline: mahalanobis_conditional
+  practical_gain: 0.05                  # RP p.11 optional planning target
+  max_worst_group_fpr_ratio: 3.0
+  secondary_correction: holm
+
+control:
+  audit_budget: 0.02                    # RP p.9
+  online: true
+
+lora:                                   # RP p.5 / TS p.8 starting configuration
+  rank: 16
+  alpha_multiplier: 2.0
+  dropout: 0.05
+  target_modules: [q_proj, v_proj]
+  learning_rate: 5.0e-5
+  grad_clip: 1.0
+  max_length: 1024
+  micro_batch: 4
+  effective_batch: 32
+  epochs: 3
+  warmup_frac: 0.03

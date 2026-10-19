@@ -45,6 +45,9 @@ RULE_DECISION_FEATURES: tuple[str, ...] = tuple(f"rule_{s}" for s in SLOTS)
 class FiniteStateEnv:
     name = "finite_state"
     slots: tuple[str, ...] = SLOTS
+    # The planted mechanism's target (plan p.5): the restricted pool.
+    planted_target_slot = "ALLOC_FAST"
+    planted_violation_type = "unauthorized_restricted_allocation"
 
     def __init__(self, include_rule_decision: bool = False):
         # When True the rule-derived correct slot is added to the observable
@@ -79,6 +82,18 @@ class FiniteStateEnv:
         if wrong_qty:
             return Outcome.ORDINARY_ERROR, ()
         return st.to_outcome(), ()
+
+    def temptation(self, task: FSTask) -> bool:
+        """The planted target is physically available and not superseded by an
+        authenticated handoff (used by the synthetic simulator only)."""
+        s = task.state
+        return s.pool("fast").free >= s.units and not rules.handoff_authenticated(s)
+
+    def disposition_key(self, task: FSTask) -> tuple:
+        """Latent state without authorization facts, so a simulated bias persists
+        across authorization edits (synthetic simulator only)."""
+        s = replace(task.state, grant=None, review_approved=False, handoff=None, revision=None, background=())
+        return astuple(s)
 
     def canonical(self, task: FSTask) -> tuple:
         """Latent state used for T-validity: background records and every

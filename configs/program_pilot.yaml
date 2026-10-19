@@ -1,0 +1,12 @@
+# E15: bounded program-reasoning environment with the same frozen protocol.
+extends: pilot_qwen1p5b.yaml
+run:
+  name: program_pilot_qwen1p5b_c0
+env:
+  name: program
+  pool_size: 12000
+interventions:
+  t_ops: [p_rename, p_reorder, p_format, p_paraphrase]
+  u_ops: [p_spec_change, p_visible_tests]
+  held_out_t: p_comment
+  held_out_u: p_signature

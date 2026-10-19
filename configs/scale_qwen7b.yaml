@@ -1,0 +1,8 @@
+# E14 scale check. Run only after the pilot validity checks pass (RP p.3).
+extends: pilot_qwen1p5b.yaml
+run:
+  name: scale_qwen7b_c0
+model:
+  repo_id: Qwen/Qwen2.5-7B-Instruct    # 7.61B params, 28 layers (RP p.3)
+  layers: [6, 13, 20]
+  batch_size: 4

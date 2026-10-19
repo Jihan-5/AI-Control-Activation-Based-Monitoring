@@ -100,5 +100,11 @@ def make_synthetic_bundle(
         env_label=np.array([f"fam{k}" for k in fam]),
         chosen_slot=np.argmax(a_base, axis=1),
         cost={"base": 1.0, "edits": float(E)},
+        # Edited inputs keep the base context here (deltas zero); U edits are
+        # declared decision-changing, as the U contract requires.
+        extras={
+            "context_edit": np.repeat(c[:, None, :], E, axis=1).astype(np.float32),
+            "edit_decision_changed": np.repeat((np.arange(E) >= n_t)[None], n, axis=0),
+        },
     )
     return bundle, y

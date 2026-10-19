@@ -1,0 +1,38 @@
+# CI / laptop smoke test. Uses the SYNTHETIC simulator backend: it exercises every
+# stage end to end on CPU in minutes. Its numbers are NOT evidence about language models.
+extends: base.yaml
+run:
+  name: smoke_synthetic
+model:
+  backend: synthetic
+  checkpoint: C2cue                     # synthetic cue-conditional organism + prompt conflict
+  layers: [2, 4, 6]
+  synthetic:
+    d_model: 48
+    n_layers: 8
+    organism: cue_conditional
+env:
+  pool_size: 8000
+  p_conflict_opportunity: 0.5
+  p_conflict_prompt: 0.4
+  n_outcome_matched_pairs: 40
+splits:
+  plan: pilot
+  scale: 0.25
+detectors:
+  proposed:
+    width: 16
+    nuisance_rank: 4
+evaluation:
+  n_bootstrap: 500
+attack:
+  enabled: true
+  n_roots: 10
+  black_box_budget: 20
+selection:
+  width: [8, 16]
+  ridge_alpha: [1.0, 10.0]
+  covariance: [ledoit_wolf]
+  aggregation: [concat, max]
+  nuisance_rank: [0, 4]
+  check_mlp: false

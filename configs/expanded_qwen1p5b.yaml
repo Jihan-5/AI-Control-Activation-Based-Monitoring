@@ -1,0 +1,9 @@
+# Expanded sizes from the technical specification (TS p.2): larger calibration and
+# test splits for informative low-FPR comparisons, plus audit and utility splits.
+extends: pilot_qwen1p5b.yaml
+run:
+  name: expanded_qwen1p5b_c0
+env:
+  pool_size: 40000
+splits:
+  plan: expanded

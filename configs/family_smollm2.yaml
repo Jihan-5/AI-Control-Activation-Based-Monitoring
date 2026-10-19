@@ -1,0 +1,11 @@
+# E14 family replication: separate family check, not an equally capable replacement.
+# Depth set mapped proportionally from the 28-layer declaration; the resolved layers
+# are asserted against the loaded config and recorded in the manifest.
+extends: pilot_qwen1p5b.yaml
+run:
+  name: family_smollm2_c0
+model:
+  repo_id: HuggingFaceTB/SmolLM2-1.7B-Instruct
+  layers: [6, 13, 20]
+  layer_mode: proportional
+  reference_n_layers: 28

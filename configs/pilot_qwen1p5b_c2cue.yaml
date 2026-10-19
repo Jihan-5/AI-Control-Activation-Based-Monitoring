@@ -1,0 +1,8 @@
+# Same protocol on the cue-conditional organism (E3 output). Separate detector per
+# checkpoint (RP p.3). Test violations include the held-out cue_conditional mechanism.
+extends: pilot_qwen1p5b.yaml
+run:
+  name: pilot_qwen1p5b_c2cue
+model:
+  checkpoint: C2cue
+  adapter_path: runs/adapters/organism_cue-seed11   # produced by `irmon train-adapter --kind organism_cue`

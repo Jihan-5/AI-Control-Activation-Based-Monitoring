@@ -1,0 +1,9 @@
+# E0-E13 engineering pilot on the frozen C0 checkpoint.
+extends: base.yaml
+run:
+  name: pilot_qwen1p5b_c0
+model:
+  repo_id: Qwen/Qwen2.5-1.5B-Instruct
+  checkpoint: C0
+splits:
+  plan: pilot

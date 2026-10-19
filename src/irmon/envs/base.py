@@ -135,3 +135,12 @@ class RootTask:
 
     def factor(self, key: str, default: Any = None) -> Any:
         return dict(self.factors).get(key, default)
+
+
+def unwrap_task(task: Any) -> Any:
+    """Strip presentation wrappers (e.g. attack framing) to reach the latent task.
+
+    A wrapper exposes ``latent_task`` and ``rewrap(inner)``; plain tasks are
+    returned unchanged.
+    """
+    return task.latent_task if hasattr(task, "latent_task") else task

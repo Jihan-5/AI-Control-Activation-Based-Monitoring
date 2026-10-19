@@ -34,7 +34,7 @@ def validity_report(env: Environment, roots: list[RootTask], suite: EditSuite, s
             if env.parse_action(r.task, c.text) != c.slot:
                 parse_fail += 1
         results = suite.apply(env, r.task, seed=seed + i)
-        for (slot, op), draws in zip(suite.slots, results):
+        for (_slot, op), draws in zip(suite.slots, results):
             for res in draws:
                 op_total[op] += 1
                 by_branch_total[(op, r.branch)] += 1
