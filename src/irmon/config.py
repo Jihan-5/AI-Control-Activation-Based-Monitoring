@@ -60,6 +60,9 @@ class ModelConfig(_Base):
     reference_n_layers: int = 28
     batch_size: int = 8
     max_length: int = 1024  # p.5 sequence length; truncation rate is logged
+    # Score candidates from a cached prompt prefix (~7x fewer tokens; must match
+    # the uncached path within tolerance, checked in E0 by verify_prefix_cache).
+    prefix_cache: bool = True
     checkpoint: str = "C0"  # C0 original | C1 competence | C2 organism | C2cue
     adapter_path: str | None = None
     trust_remote_code: bool = False

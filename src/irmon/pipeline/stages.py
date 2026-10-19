@@ -255,7 +255,8 @@ def stage_validate_env(ctx: RunContext, n_roots: int = 2000) -> dict:
     gates = [
         G.gate_t_validity(min(t_rates) if t_rates else 0.0),
         G.gate_parse_roundtrip(rep["candidate_parse_failures"]),
-        G.gate_u_validity(max(u_rates.values()) if u_rates else 0.0),
+        # Every main-suite U operator must clear the threshold (the weakest one decides).
+        G.gate_u_validity(min(u_rates.values()) if u_rates else 0.0),
     ]
     ctx.gate("validate_env", gates)
     print(f"[validate-env] T validity min={min(t_rates):.3f}; U validity={u_rates}; review sample: {n} roots")

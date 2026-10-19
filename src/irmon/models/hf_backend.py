@@ -123,6 +123,7 @@ class HFBackend(ActorBackend):
         max_length: int = 1024,
         append_eos: bool = True,
         debug_checks: bool = False,
+        prefix_cache: bool = True,
     ):
         super().__init__()
         torch = _torch()
@@ -137,6 +138,10 @@ class HFBackend(ActorBackend):
         self.max_length = max_length
         self.append_eos = append_eos
         self.debug_checks = debug_checks
+        # Score candidates by running each prompt once and continuing from its
+        # KV cache (identical log-probs to re-running prompt+candidate; checked
+        # by ``verify_prefix_cache``). Cuts candidate-scoring tokens ~K-fold.
+        self.prefix_cache = prefix_cache
         self.dtype_note = ""
         self.n_truncated = 0
         self._prompt_cache: dict[str, list[int]] = {}
@@ -209,7 +214,7 @@ class HFBackend(ActorBackend):
             dtype=cfg.dtype, device=cfg.device, attn_implementation=cfg.attn_implementation,
             quantization=cfg.quantization, adapter_path=cfg.adapter_path,
             trust_remote_code=cfg.trust_remote_code, batch_size=cfg.batch_size,
-            max_length=cfg.max_length,
+            max_length=cfg.max_length, prefix_cache=getattr(cfg, "prefix_cache", True),
         )
         kw.update(overrides)
         backend = cls(**kw)
@@ -348,6 +353,105 @@ class HFBackend(ActorBackend):
             self.counter.prompt_tokens += int(mask.sum())
         return scores, hidden
 
+    def _score_cached(
+        self,
+        prompts_ids: list[list[int]],
+        cands_ids: list[list[list[int]]],
+        layers: Sequence[int] | None = None,
+    ) -> tuple[np.ndarray, np.ndarray | None]:
+        """Prefix-cached scoring: one prompt pass per prompt, then all K candidate
+        continuations from the repeated KV cache.
+
+        Prompts are right-padded; continuation tokens get explicit position ids
+        ``len(prompt) + t`` and an attention mask that hides the padding inside
+        the cache, so every candidate sees exactly its own unpadded prompt.
+        Token t of a candidate is scored by the logits at the previous position
+        (the prompt-final position for t = 0).
+        """
+        torch = _torch()
+        from transformers import DynamicCache
+
+        decoder = _decoder(self.model)
+        head = _base_model(self.model).get_output_embeddings()
+        N, K = len(prompts_ids), len(cands_ids[0])
+        scores = np.zeros((N, K), dtype=np.float64)
+        hidden = None if layers is None else np.zeros((N, len(layers), self.d_model), np.float32)
+        bs = max(1, self.batch_size)
+        for s in range(0, N, bs):
+            P = prompts_ids[s : s + bs]
+            C = cands_ids[s : s + bs]
+            B = len(P)
+            ids, mask = self._pad_right(P)
+            plen = mask.sum(1)
+            self._gather_idx = plen - 1
+            cache = DynamicCache()
+            ctx = self._hooks(layers) if layers is not None else _null()
+            with torch.inference_mode(), ctx as caps:
+                h = decoder(input_ids=ids, attention_mask=mask, past_key_values=cache, use_cache=True).last_hidden_state
+                last = h[torch.arange(B, device=self.device), plen - 1]
+                lp0 = torch.log_softmax(head(last).float(), dim=-1)  # (B, V) predicts candidate token 0
+            if layers is not None:
+                for j, li in enumerate(layers):
+                    hidden[s : s + B, j] = caps[li].numpy()
+            # Continue every candidate from the shared prefix.
+            flat = [c for cs in C for c in cs]  # B*K candidate id lists
+            Lc = max(len(c) for c in flat)
+            cont_ids = torch.full((B * K, max(Lc - 1, 1)), self.tokenizer.pad_token_id, dtype=torch.long)
+            cont_mask = torch.zeros((B * K, max(Lc - 1, 1)), dtype=torch.long)
+            for r, c in enumerate(flat):
+                if len(c) > 1:
+                    cont_ids[r, : len(c) - 1] = torch.tensor(c[:-1], dtype=torch.long)
+                    cont_mask[r, : len(c) - 1] = 1
+            cont_ids, cont_mask = cont_ids.to(self.device), cont_mask.to(self.device)
+            plen_rep = plen.repeat_interleave(K)
+            pos = plen_rep[:, None] + torch.arange(cont_ids.shape[1], device=self.device)[None]
+            full_mask = torch.cat([mask.repeat_interleave(K, dim=0), cont_mask], dim=1)
+            cache.batch_repeat_interleave(K)
+            with torch.inference_mode():
+                hc = decoder(input_ids=cont_ids, attention_mask=full_mask, position_ids=pos,
+                             past_key_values=cache, use_cache=True).last_hidden_state
+                rows, cols, tgt = [], [], []
+                for r, c in enumerate(flat):
+                    for t in range(1, len(c)):
+                        rows.append(r)
+                        cols.append(t - 1)
+                        tgt.append(c[t])
+                per = torch.zeros(B * K, dtype=torch.float64, device=self.device)
+                first = torch.tensor([c[0] for c in flat], device=self.device)
+                per += lp0.repeat_interleave(K, dim=0)[torch.arange(B * K, device=self.device), first].double()
+                if rows:
+                    rows_t = torch.tensor(rows, device=self.device)
+                    sel = hc[rows_t, torch.tensor(cols, device=self.device)]
+                    logp = torch.log_softmax(head(sel).float(), dim=-1)
+                    tok_lp = logp[torch.arange(len(tgt), device=self.device), torch.tensor(tgt, device=self.device)]
+                    per.index_add_(0, rows_t, tok_lp.double())
+            scores[s : s + B] = per.cpu().numpy().reshape(B, K)
+            self.counter.prompt_forwards += B
+            self.counter.candidate_forwards += B * K
+            self.counter.prompt_tokens += int(mask.sum()) + int(cont_mask.sum())
+        return scores, hidden
+
+    def _build_cached_inputs(self, prompts, candidates):
+        P, C = [], []
+        for p, cands in zip(prompts, candidates):
+            cids = [self.candidate_ids(c) for c in cands]
+            P.append(self.prompt_ids(p, reserve=max(len(c) for c in cids)))
+            C.append(cids)
+        if len({len(c) for c in C}) != 1:
+            raise ValueError("every prompt must have the same number of candidates (canonical slots)")
+        return P, C
+
+    def verify_prefix_cache(self, prompts, candidates, layers: Sequence[int] | None = None) -> dict:
+        """Max abs difference between cached and uncached scoring (E0 gate)."""
+        layers = list(layers or self.layers)
+        P, C = self._build_cached_inputs(prompts, candidates)
+        sc, hc = self._score_cached(P, C, layers=layers)
+        pairs, K = self._build_pairs(prompts, candidates)
+        su, hu = self._score_pairs(pairs, layers=layers)
+        hu = hu.reshape(len(prompts), K, len(layers), self.d_model)[:, 0]
+        return {"max_abs_score_diff": float(np.abs(sc - su.reshape(len(prompts), K)).max()),
+                "max_abs_hidden_diff": float(np.abs(hc - hu).max())}
+
     def _build_pairs(self, prompts, candidates):
         pairs, shape = [], []
         for p, cands in zip(prompts, candidates):
@@ -362,6 +466,11 @@ class HFBackend(ActorBackend):
 
     def score_candidates(self, prompts: Sequence[ChatPrompt], candidates: Sequence[Sequence[str]]) -> np.ndarray:
         t0 = time.perf_counter()
+        if self.prefix_cache:
+            P, C = self._build_cached_inputs(prompts, candidates)
+            scores, _ = self._score_cached(P, C)
+            self._timed("candidates", t0)
+            return scores.astype(np.float32)
         pairs, K = self._build_pairs(prompts, candidates)
         scores, _ = self._score_pairs(pairs)
         self._timed("candidates", t0)
@@ -370,6 +479,11 @@ class HFBackend(ActorBackend):
     def hidden_and_scores(self, prompts, layers, candidates):
         """Fused: hidden states come from the candidate passes (shared prefix)."""
         t0 = time.perf_counter()
+        if self.prefix_cache:
+            P, C = self._build_cached_inputs(prompts, candidates)
+            scores, hidden = self._score_cached(P, C, layers=layers)
+            self._timed("hidden_and_scores", t0)
+            return hidden, scores.astype(np.float32)
         pairs, K = self._build_pairs(prompts, candidates)
         scores, hidden = self._score_pairs(pairs, layers=layers)
         hidden = hidden.reshape(len(prompts), K, len(layers), self.d_model)

@@ -287,6 +287,8 @@ Every detector declares an `AccessSpec`; the access table is printed beside ever
 ## 10. Experiments
 
 Full cards with procedures, outputs and decision rules: **[`docs/EXPERIMENT_PLAN.md`](docs/EXPERIMENT_PLAN.md)**.
+Schedule, compute budget (≈ 50–60 A100-hours with buffer) and day-by-day decision points:
+**[`docs/EXECUTION_PLAN.md`](docs/EXECUTION_PLAN.md)**.
 
 | ID | Experiment | Serves | Gate / output |
 |---|---|---|---|

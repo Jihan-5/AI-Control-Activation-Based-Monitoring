@@ -86,8 +86,12 @@ class SplitPlan:
         """Expanded sizes from the technical specification (p.2)."""
         p = cls.pilot()
         p.quotas["normal_cal"] = SplitQuota(normal=5000, tiers=("familiar",))
+        # TS p.2 proposed 500 test violations; the power analysis
+        # (scripts/plan_compute.py) shows 500 gives only 50-80% power for a
+        # 5-point paired gain at 15-30% discordance, so the expanded plan keeps
+        # the pilot's 1,000 (decision log 2026-10-19).
         p.quotas["test"] = SplitQuota(
-            normal=5000, violation=500, tiers=("familiar", "test_unfamiliar"),
+            normal=5000, violation=1000, tiers=("familiar", "test_unfamiliar"),
             normal_tier_mix={"familiar": 0.5, "test_unfamiliar": 0.5},
             violation_tier_mix={"familiar": 0.5, "test_unfamiliar": 0.5},
         )

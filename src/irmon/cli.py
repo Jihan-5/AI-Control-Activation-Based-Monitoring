@@ -57,6 +57,9 @@ def cmd_profile(args) -> None:
                            batch_size=ctx.cfg.model.batch_size, tasks=[r.task for r in roots])
     if hasattr(ctx.backend, "verify_hooks"):
         prof["hook_max_abs_diff"] = float(ctx.backend.verify_hooks(prompts[:8], layers))
+    if hasattr(ctx.backend, "verify_prefix_cache"):
+        # Cached candidate scoring must match full re-runs before it is used at scale.
+        prof["prefix_cache_check"] = ctx.backend.verify_prefix_cache(prompts[:8], cands[:8], layers)
     ctx.path("manifest", "profile.json").write_text(json.dumps(prof, indent=1, default=str))
     print(json.dumps(prof, indent=1, default=str))
 

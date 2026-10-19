@@ -97,3 +97,22 @@ def test_truncation_and_manifest(setup):
         assert key in m
     assert m["layers"] == [1, 2, 3]
     assert b.generate(prompts[:2], max_new_tokens=3)
+
+
+def test_prefix_cache_matches_uncached_path(setup):
+    """Cached scoring must reproduce full prompt+candidate re-runs exactly
+    (fp32 tiny model), including hidden states at the prompt-final token."""
+    _, _, b, prompts, cands = setup
+    diff = b.verify_prefix_cache(prompts[:8], cands[:8], layers=(1, 2, 3))
+    assert diff["max_abs_score_diff"] < 1e-4, diff
+    assert diff["max_abs_hidden_diff"] < 1e-5, diff
+    b.prefix_cache = False
+    try:
+        S_unc = b.score_candidates(prompts[:5], cands[:5])
+        H_unc, A_unc = b.hidden_and_scores(prompts[:5], (1, 3), cands[:5])
+    finally:
+        b.prefix_cache = True
+    np.testing.assert_allclose(b.score_candidates(prompts[:5], cands[:5]), S_unc, atol=1e-4)
+    H_c, A_c = b.hidden_and_scores(prompts[:5], (1, 3), cands[:5])
+    np.testing.assert_allclose(H_c, H_unc, atol=1e-5)
+    np.testing.assert_allclose(A_c, A_unc, atol=1e-4)
