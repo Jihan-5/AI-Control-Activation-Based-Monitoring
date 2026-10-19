@@ -3,7 +3,7 @@
 # conflict only: Qwen2.5-7B (core detectors), SmolLM2-1.7B, program environment.
 # H100 time: ~1.5 h (7B) + ~1 h (SmolLM2) + ~1.5 h (program env). Restartable.
 set -uo pipefail
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/.." || exit 1
 source .venv/bin/activate 2>/dev/null || true
 source scripts/h100_env.sh
 # Pre-lock decision (GUIDE.md section 3.6): which roots enter the primary paired comparison.

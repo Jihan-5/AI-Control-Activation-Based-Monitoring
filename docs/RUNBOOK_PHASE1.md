@@ -20,7 +20,7 @@ phase 1 touches a test split.
 
 ```bash
 # 1. Setup (~15-30 min): clone, venv, install, GPU check, offline tests, pin model revision
-git clone -b claude/brave-goodall-7hssnr https://github.com/Jihan-5/AI-Control-Activation-Based-Monitoring
+git clone https://github.com/Jihan-5/AI-Control-Activation-Based-Monitoring
 cd AI-Control-Activation-Based-Monitoring
 bash scripts/gpu_setup.sh
 

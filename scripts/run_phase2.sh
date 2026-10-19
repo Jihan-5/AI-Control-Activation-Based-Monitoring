@@ -12,7 +12,7 @@
 # (file hash) before the calibration split opens, and the primary comparison is
 # written to the decision log before any stage runs.
 set -uo pipefail
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/.." || exit 1
 source .venv/bin/activate 2>/dev/null || true
 source scripts/h100_env.sh
 # Pre-lock decision (GUIDE.md section 3.6): which roots enter the primary paired comparison.

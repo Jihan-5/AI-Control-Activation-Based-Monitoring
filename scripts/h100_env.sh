@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # Shared settings for the H100 scripts (sourced, not executed).
 # H100 80GB: larger batches than the configs' defaults. Lower these on OOM.
 export BATCH_1P5B=${BATCH_1P5B:-32}   # Qwen2.5-1.5B / SmolLM2-1.7B scoring batch (prompts)

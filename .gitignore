@@ -19,3 +19,5 @@ wandb/
 paper/draft_preview.docx
 .pinned/
 .pinned_revision
+# run_today.sh console logs and locks (snapshots go to results/progress/)
+logs/

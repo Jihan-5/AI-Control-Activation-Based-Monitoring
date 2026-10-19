@@ -7,7 +7,7 @@
 # Gates are RECORDED, not enforced, in phase 1 (--force): a failed gate is a
 # result we review together before deciding scope. Nothing here touches a test split.
 set -uo pipefail
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/.." || exit 1
 source .venv/bin/activate 2>/dev/null || true
 
 source scripts/h100_env.sh

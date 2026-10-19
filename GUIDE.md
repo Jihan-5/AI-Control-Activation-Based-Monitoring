@@ -27,6 +27,7 @@ H100 day: what to rent, what to type, and what each result means.
   - [2.4 Run the full pipeline on the synthetic simulator](#24-run-the-full-pipeline-on-the-synthetic-simulator)
   - [2.5 Change anything with configs](#25-change-anything-with-configs)
 - **Part 3 — The H100 day**
+  - [3.0 One command, unattended (recommended)](#30-one-command-unattended-recommended)
   - [3.1 What to rent](#31-what-to-rent)
   - [3.2 Hour-by-hour plan](#32-hour-by-hour-plan)
   - [3.3 Setup (≈ 20 min)](#33-setup--20-min)
@@ -46,7 +47,7 @@ H100 day: what to rent, what to type, and what each result means.
 
 ```bash
 # --- your laptop (understand + verify; no GPU) ---
-git clone -b claude/brave-goodall-7hssnr https://github.com/Jihan-5/AI-Control-Activation-Based-Monitoring
+git clone https://github.com/Jihan-5/AI-Control-Activation-Based-Monitoring
 cd AI-Control-Activation-Based-Monitoring
 python3 -m venv .venv && source .venv/bin/activate
 pip install torch --index-url https://download.pytorch.org/whl/cpu   # CPU torch (macOS: plain `pip install torch`)
@@ -54,14 +55,17 @@ pip install -e ".[model,dev]"
 pytest -q                          # 210 tests, ~3-4 min
 irmon smoke                        # whole pipeline on the synthetic simulator, ~2 min
 
-# --- the H100 (the real study) ---
-git clone -b claude/brave-goodall-7hssnr https://github.com/Jihan-5/AI-Control-Activation-Based-Monitoring
-cd AI-Control-Activation-Based-Monitoring && bash scripts/gpu_setup.sh   # ~20 min
+# --- the H100 (the real study): one command, unattended (section 3.0) ---
+cd /workspace && git clone https://github.com/Jihan-5/AI-Control-Activation-Based-Monitoring
+cd AI-Control-Activation-Based-Monitoring
+export GH_TOKEN=github_pat_...        # lets the pod push progress to GitHub (section 3.0, step 2)
+PRIMARY_POP=familiar AUTO_STOP=1 bash scripts/run_today.sh --background   # ~6.5-7.5 h, close the tab
+# progress: branch h100-run -> results/progress/state.json   results: results/h100/
+
+# --- or step by step, looking at phase 1 before phase 2 (sections 3.3-3.9) ---
+bash scripts/gpu_setup.sh                                   # ~20 min
 tmux new -s run 'bash scripts/run_phase1.sh; bash'          # ~1.5-2 h -> prints D1/D2 tables
-# read the tables (section 3.5), make the pre-lock decision (section 3.6), then:
-PRIMARY_POP=familiar bash scripts/run_phase2.sh             # ~1.5 h per checkpoint (3 checkpoints by default)
-PRIMARY_POP=familiar bash scripts/run_replication.sh        # optional, ~4 h
-git add results && git commit -m "H100 results" && git push
+PRIMARY_POP=familiar bash scripts/run_phase2.sh             # ~1.5 h per checkpoint (3 checkpoints)
 ```
 
 ---
@@ -181,7 +185,7 @@ Requirements: Python 3.10–3.13, git, ~4 GB free disk. Works on Linux and macOS
 WSL2 (the shell scripts need bash).
 
 ```bash
-git clone -b claude/brave-goodall-7hssnr https://github.com/Jihan-5/AI-Control-Activation-Based-Monitoring
+git clone https://github.com/Jihan-5/AI-Control-Activation-Based-Monitoring
 cd AI-Control-Activation-Based-Monitoring
 python3 -m venv .venv
 source .venv/bin/activate                     # Windows/WSL: same; fish: source .venv/bin/activate.fish
@@ -287,6 +291,86 @@ irmon fit --config configs/pilot_qwen1p5b.yaml --set detectors.proposed.width=64
 
 # Part 3 — The H100 day
 
+## 3.0 One command, unattended (recommended)
+
+Same pattern as the alignment study: you start a pod, paste one command and close the tab. The run
+pushes a progress snapshot to GitHub after every step and every 30 minutes, so Claude can follow it
+from the branch `h100-run` without access to the pod.
+
+**1. Rent the pod (RunPod, ~5 min).**
+- Deploy a pod with **1 × H100 80 GB** (SXM, PCIe or NVL) and a **PyTorch** template.
+- Container disk **50 GB**; volume **150 GB** mounted at `/workspace` (200 GB with replication — the 7B model is 15 GB).
+- Open a terminal: **Connect → Jupyter Lab → Terminal** (or SSH).
+- Credit: H100s cost ~$2.5–4/h, so ~$20–30 covers the main study and ~$35–45 adds replication.
+
+Don't run this on the alignment pod while that study is running. Two training jobs on one GPU risk
+running out of memory, slow each other down and distort the alignment run's timing measurements.
+Rent a second pod, or run this on the same pod after the alignment study has finished.
+
+**2. Make a GitHub token so the pod can push progress (~2 min).** github.com → Settings → Developer
+settings → Personal access tokens → **Fine-grained tokens** → Generate new token:
+- Repository access: *Only select repositories* → `AI-Control-Activation-Based-Monitoring`.
+- Permissions → Repository permissions → **Contents: Read and write**.
+- Expiration: 7 days.
+
+Copy the token (`github_pat_…`). The script reads it from the environment when it pushes and never
+writes it to disk. Without a token the run still works; the results just stay on the pod.
+
+**3. Paste this into the pod terminal.**
+```bash
+cd /workspace
+git clone https://github.com/Jihan-5/AI-Control-Activation-Based-Monitoring
+cd AI-Control-Activation-Based-Monitoring
+export GH_TOKEN=github_pat_...                  # from step 2
+PRIMARY_POP=familiar GPU_RATE=2.69 AUTO_STOP=1 bash scripts/run_today.sh --background
+```
+- `PRIMARY_POP=familiar` is the pre-lock decision of [§3.6](#36-pre-lock-checklist--10-min-do-not-skip).
+  Setting it before anything runs is what keeps it pre-registered. Use `all` if you decided otherwise.
+- `GPU_RATE` is the pod's $/hour (shown on RunPod). It is used only for the cost line.
+- `AUTO_STOP=1` stops the pod once the final snapshot is on GitHub, so a finish at 3 am doesn't bill
+  idle hours. The volume (with `runs/`) is kept; terminate the pod yourself when you're done with it.
+- Add `REPLICATION=1` for the 7B / SmolLM2 / program-environment replication (~4 h more).
+
+It prints where the log is and returns. You can close the browser.
+
+**4. What it does.** On a re-run, each finished step is skipped.
+
+| Step | ≈ H100 time | Snapshot commit |
+|---|---|---|
+| setup: venv, install, GPU check, offline tests, pin and download Qwen | 20 min | `setup ok` |
+| phase 1: E1, E0, screen C0, train 4 adapters, screen C2cue and C2 | 1.5–2 h | `phase1 ok`, plus `results/progress/phase1_summary.txt` (the D1/D2 tables) |
+| phase 2 on C2cue (the main study) | ~1.5 h | `phase2_pilot_qwen1p5b_c2cue ok` |
+| phase 2 on C0 | ~1.5 h | `phase2_pilot_qwen1p5b_c0 ok` |
+| phase 2 on C2 | ~1.5 h | `phase2_pilot_qwen1p5b_c2 ok` |
+| replication (only with `REPLICATION=1`) | ~4 h | `replication ok` |
+| finish | — | `finished`, plus `results/progress/SUMMARY.txt` |
+
+Every 30 minutes a `heartbeat` commit records GPU utilisation and the last log lines, so "still
+running" and "stuck" look different from GitHub.
+
+In unattended mode D1/D2 are read *after* the run: phase-1 gates are recorded and phase 2 runs on
+all three checkpoints anyway. The run stops early only if setup or the offline tests fail (exit 5),
+or if C0 produced no screening pool (exit 6). Read `phase1_summary.txt` before interpreting phase 2.
+For example, if the cue organism did not form, the C2cue study measures a model that hardly ever
+violates, and the write-up must say so.
+
+**5. Follow it.**
+- On GitHub: branch `h100-run` → `results/progress/state.json` (phase statuses, minutes, elapsed
+  hours, cost) and `results/progress/last_log.txt`.
+- From Claude: say "it's running" and it checks the branch for you.
+- On the pod: `tail -f /workspace/AI-Control-Activation-Based-Monitoring/logs/run_today_*.log`.
+
+**6. If something fails.** A failed phase is marked `failed` and the run moves on; the final status
+lists the failed phases (exit 7). Fix the cause (Part 5) and paste the **same command** again;
+finished phases are skipped. If the pod itself died, start a new pod and paste the same command: it
+continues on the same `h100-run` branch.
+
+**7. At the end.** The results are on branch `h100-run` under `results/h100/`, in the same layout
+that Part 4 describes. Tell Claude: it merges them into `main` and fills the paper tables.
+
+The rest of Part 3 is the step-by-step route, for when you want to look at phase 1 before
+committing to phase 2.
+
 ## 3.1 What to rent
 
 | Item | Choose |
@@ -326,7 +410,7 @@ result. Everything after that strengthens it.
 ssh <your-h100>
 sudo apt-get install -y tmux git          # usually preinstalled
 gh auth login                             # only if the repo is private (or use a token URL)
-git clone -b claude/brave-goodall-7hssnr https://github.com/Jihan-5/AI-Control-Activation-Based-Monitoring
+git clone https://github.com/Jihan-5/AI-Control-Activation-Based-Monitoring
 cd AI-Control-Activation-Based-Monitoring
 bash scripts/gpu_setup.sh
 ```
@@ -507,7 +591,10 @@ Or push `results/` and ask me to fill the paper from it.
 | `refusing to overwrite immutable manifest` | Splits already exist with different contents. Use a new `--set run.name=...` instead of deleting, and log why |
 | A step shows `[FAIL]` | Read `runs/*_logs/<step>.log`. Re-running the script retries only unfinished steps |
 | HF download slow | `pip install hf_transfer && export HF_HUB_ENABLE_HF_TRANSFER=1` |
-| Lost SSH connection | Everything runs in tmux: `tmux attach -t run` |
+| Lost SSH connection / closed the browser | `run_today.sh --background` and tmux both keep running: `tail -f logs/run_today_*.log` or `tmux attach -t run` |
+| `No NVIDIA GPU visible here` | You ran `run_today.sh` on a machine without a GPU (e.g. your laptop). Run it in the pod terminal |
+| No snapshots on branch `h100-run` | On the pod: `cat logs/push_errors.log`. Usually the token is missing *Contents: write* or has expired. The run keeps going; when it ends, `export GH_TOKEN=<new token>` and paste the same command: every phase is skipped and the final snapshot is pushed |
+| `Another run_today.sh is already running` | It is still working (that's the lock). Watch it with `tail -f logs/run_today_*.log` |
 | Disk full | `du -sh runs/*/bundles`; bundles of finished studies can be deleted after `collect_results.sh` |
 
 **Why a synthetic simulator?** To test 12 stages, 13 detectors and every guard without a GPU. It
@@ -554,6 +641,6 @@ logged with `exploratory: true`. The primary result stays the preregistered one.
 All commands take `--config <yaml>`, any number of `--set key=value`, and `--force` (continue past
 a failed blocking gate; recorded in the decision log).
 
-Scripts: `gpu_setup.sh` · `run_phase1.sh` · `run_phase2.sh` · `run_replication.sh` ·
+Scripts: `run_today.sh` (everything, unattended) · `gpu_setup.sh` · `run_phase1.sh` · `run_phase2.sh` · `run_replication.sh` ·
 `collect_results.sh` · `summarize.py` · `plan_compute.py` · `run_theory_sim.py` · `pin_revision.py` ·
 `h100_env.sh` (shared settings).
