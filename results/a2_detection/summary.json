@@ -1,0 +1,222 @@
+{
+  "test": {
+    "n_normal": 5000,
+    "n_violating": 500,
+    "n_families": 24,
+    "tpr": {
+      "0.01": {
+        "behavior_logistic": 0.094,
+        "contrast_probe": 0.0,
+        "fa_style": 0.02,
+        "linear_probe": 0.022,
+        "mahalanobis_env": 0.006,
+        "mahalanobis_pooled": 0.004,
+        "mahalanobis_task": 0.002,
+        "response": 0.01,
+        "strip_entropy": 0.0,
+        "teco_dispersion": 0.0
+      },
+      "0.02": {
+        "behavior_logistic": 0.176,
+        "contrast_probe": 0.0,
+        "fa_style": 0.028,
+        "linear_probe": 0.06,
+        "mahalanobis_env": 0.01,
+        "mahalanobis_pooled": 0.01,
+        "mahalanobis_task": 0.006,
+        "response": 0.018,
+        "strip_entropy": 0.0,
+        "teco_dispersion": 0.0
+      },
+      "0.05": {
+        "behavior_logistic": 0.368,
+        "contrast_probe": 0.0,
+        "fa_style": 0.046,
+        "linear_probe": 0.17,
+        "mahalanobis_env": 0.03,
+        "mahalanobis_pooled": 0.03,
+        "mahalanobis_task": 0.03,
+        "response": 0.038,
+        "strip_entropy": 0.0,
+        "teco_dispersion": 0.09
+      }
+    },
+    "fpr": {
+      "0.01": {
+        "behavior_logistic": 0.0084,
+        "contrast_probe": 0.0086,
+        "fa_style": 0.0122,
+        "linear_probe": 0.008,
+        "mahalanobis_env": 0.0082,
+        "mahalanobis_pooled": 0.0074,
+        "mahalanobis_task": 0.0072,
+        "response": 0.0112,
+        "strip_entropy": 0.011,
+        "teco_dispersion": 0.0
+      },
+      "0.02": {
+        "behavior_logistic": 0.0202,
+        "contrast_probe": 0.0198,
+        "fa_style": 0.0188,
+        "linear_probe": 0.0142,
+        "mahalanobis_env": 0.0156,
+        "mahalanobis_pooled": 0.0154,
+        "mahalanobis_task": 0.016,
+        "response": 0.0204,
+        "strip_entropy": 0.0188,
+        "teco_dispersion": 0.0
+      },
+      "0.05": {
+        "behavior_logistic": 0.0556,
+        "contrast_probe": 0.0546,
+        "fa_style": 0.0462,
+        "linear_probe": 0.0452,
+        "mahalanobis_env": 0.0378,
+        "mahalanobis_pooled": 0.04,
+        "mahalanobis_task": 0.0408,
+        "response": 0.0456,
+        "strip_entropy": 0.0512,
+        "teco_dispersion": 0.044
+      }
+    },
+    "auroc": {
+      "behavior_logistic": 0.9059,
+      "contrast_probe": 0.4844,
+      "fa_style": 0.5186,
+      "linear_probe": 0.8215,
+      "mahalanobis_env": 0.6506,
+      "mahalanobis_pooled": 0.6569,
+      "mahalanobis_task": 0.651,
+      "response": 0.5525,
+      "strip_entropy": 0.5336,
+      "teco_dispersion": 0.5319
+    },
+    "score_ms_per_1000": {
+      "response": 0.016264828768643467,
+      "mahalanobis_pooled": 0.013148221102627842,
+      "mahalanobis_task": 0.013989925384521484,
+      "mahalanobis_env": 0.013742360201748934,
+      "linear_probe": 0.0018060424111106179,
+      "contrast_probe": 0.0008976676247336648,
+      "behavior_logistic": 0.000744993036443537,
+      "strip_entropy": 0.00012601505626331675,
+      "teco_dispersion": 9.718808260830966e-05,
+      "fa_style": 0.0009437907825816761
+    }
+  },
+  "test_heldout": {
+    "n_normal": 1000,
+    "n_violating": 200,
+    "n_families": 8,
+    "tpr": {
+      "0.01": {
+        "behavior_logistic": 0.06,
+        "contrast_probe": 0.0,
+        "fa_style": 0.01,
+        "linear_probe": 0.02,
+        "mahalanobis_env": 0.025,
+        "mahalanobis_pooled": 0.0,
+        "mahalanobis_task": 0.0,
+        "response": 0.01,
+        "strip_entropy": 0.0,
+        "teco_dispersion": 0.0
+      },
+      "0.02": {
+        "behavior_logistic": 0.14,
+        "contrast_probe": 0.0,
+        "fa_style": 0.01,
+        "linear_probe": 0.04,
+        "mahalanobis_env": 0.03,
+        "mahalanobis_pooled": 0.01,
+        "mahalanobis_task": 0.005,
+        "response": 0.02,
+        "strip_entropy": 0.0,
+        "teco_dispersion": 0.0
+      },
+      "0.05": {
+        "behavior_logistic": 0.335,
+        "contrast_probe": 0.0,
+        "fa_style": 0.025,
+        "linear_probe": 0.125,
+        "mahalanobis_env": 0.105,
+        "mahalanobis_pooled": 0.05,
+        "mahalanobis_task": 0.065,
+        "response": 0.03,
+        "strip_entropy": 0.0,
+        "teco_dispersion": 0.055
+      }
+    },
+    "fpr": {
+      "0.01": {
+        "behavior_logistic": 0.005,
+        "contrast_probe": 0.011,
+        "fa_style": 0.005,
+        "linear_probe": 0.005,
+        "mahalanobis_env": 0.029,
+        "mahalanobis_pooled": 0.012,
+        "mahalanobis_task": 0.011,
+        "response": 0.012,
+        "strip_entropy": 0.02,
+        "teco_dispersion": 0.0
+      },
+      "0.02": {
+        "behavior_logistic": 0.024,
+        "contrast_probe": 0.024,
+        "fa_style": 0.013,
+        "linear_probe": 0.016,
+        "mahalanobis_env": 0.044,
+        "mahalanobis_pooled": 0.026,
+        "mahalanobis_task": 0.018,
+        "response": 0.027,
+        "strip_entropy": 0.029,
+        "teco_dispersion": 0.0
+      },
+      "0.05": {
+        "behavior_logistic": 0.06,
+        "contrast_probe": 0.044,
+        "fa_style": 0.03,
+        "linear_probe": 0.055,
+        "mahalanobis_env": 0.081,
+        "mahalanobis_pooled": 0.054,
+        "mahalanobis_task": 0.054,
+        "response": 0.055,
+        "strip_entropy": 0.054,
+        "teco_dispersion": 0.03
+      }
+    },
+    "auroc": {
+      "behavior_logistic": 0.879,
+      "contrast_probe": 0.4785,
+      "fa_style": 0.5206,
+      "linear_probe": 0.8004,
+      "mahalanobis_env": 0.6173,
+      "mahalanobis_pooled": 0.6176,
+      "mahalanobis_task": 0.6122,
+      "response": 0.5594,
+      "strip_entropy": 0.5612,
+      "teco_dispersion": 0.5213
+    },
+    "score_ms_per_1000": {
+      "response": 0.015322168668111166,
+      "mahalanobis_pooled": 0.012933810551961264,
+      "mahalanobis_task": 0.01629332701365153,
+      "mahalanobis_env": 0.01323699951171875,
+      "linear_probe": 0.0014716386795043945,
+      "contrast_probe": 0.0009161233901977539,
+      "behavior_logistic": 0.0008887052536010742,
+      "strip_entropy": 0.00020821889241536457,
+      "teco_dispersion": 0.00014523665110270181,
+      "fa_style": 0.0010802348454793296
+    }
+  },
+  "ambiguous_action_strings": 5,
+  "hook_check": {
+    "max_abs_diff": 0.0,
+    "sites": [
+      1,
+      2,
+      4
+    ],
+    "tensor": "output of model.model.layers[i] at the last (left-padded) prompt token"
+  }
+}

@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "actmon"
+version = "0.1.0"
+description = "Activation-based monitoring of a frozen LLM actor in a resource-allocation simulator: intervention-response detector, baselines, audit, utility and a white-box obfuscation attack."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Jihan Mankani" }]
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "scikit-learn>=1.4",
+    "pandas>=2.1",
+    "matplotlib>=3.8",
+    "pyyaml>=6.0",
+    "tqdm>=4.66",
+    "torch>=2.2",
+    "transformers>=4.45",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "tokenizers>=0.19"]
+
+[project.scripts]
+actmon = "actmon.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+markers = [
+    "lm: requires transformers (uses randomly initialised tiny Qwen2 models, no download)",
+]

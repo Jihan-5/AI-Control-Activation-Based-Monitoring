@@ -1,0 +1,26 @@
+| regime | detector | tpr | tpr_sd | fpr | n_viol | n_norm |
+|---|---|---|---|---|---|---|
+| base_shift | linear_probe | 1.000 | 0.000 | 0.049 | 1500 | 10000 |
+| base_shift | mahalanobis_env | 0.976 | 0.023 | 0.051 | 1500 | 10000 |
+| base_shift | mahalanobis_pooled | 0.973 | 0.017 | 0.052 | 1500 | 10000 |
+| base_shift | mahalanobis_task | 0.974 | 0.018 | 0.050 | 1500 | 10000 |
+| base_shift | response | 0.131 | 0.044 | 0.049 | 1500 | 10000 |
+| base_shift | response_plus_base | 0.888 | 0.070 | 0.048 | 1500 | 10000 |
+| context_shift | linear_probe | 0.044 | 0.012 | 0.047 | 1500 | 10000 |
+| context_shift | mahalanobis_env | 0.035 | 0.012 | 0.049 | 1500 | 10000 |
+| context_shift | mahalanobis_pooled | 0.042 | 0.014 | 0.051 | 1500 | 10000 |
+| context_shift | mahalanobis_task | 1.000 | 0.000 | 0.052 | 1500 | 10000 |
+| context_shift | response | 0.612 | 0.214 | 0.052 | 1500 | 10000 |
+| context_shift | response_plus_base | 0.441 | 0.280 | 0.053 | 1500 | 10000 |
+| null | linear_probe | 0.048 | 0.011 | 0.046 | 1500 | 10000 |
+| null | mahalanobis_env | 0.049 | 0.006 | 0.047 | 1500 | 10000 |
+| null | mahalanobis_pooled | 0.049 | 0.007 | 0.044 | 1500 | 10000 |
+| null | mahalanobis_task | 0.053 | 0.007 | 0.046 | 1500 | 10000 |
+| null | response | 0.047 | 0.020 | 0.051 | 1500 | 10000 |
+| null | response_plus_base | 0.047 | 0.012 | 0.051 | 1500 | 10000 |
+| response_only | linear_probe | 0.044 | 0.022 | 0.049 | 1500 | 10000 |
+| response_only | mahalanobis_env | 0.045 | 0.018 | 0.049 | 1500 | 10000 |
+| response_only | mahalanobis_pooled | 0.049 | 0.013 | 0.049 | 1500 | 10000 |
+| response_only | mahalanobis_task | 0.049 | 0.014 | 0.051 | 1500 | 10000 |
+| response_only | response | 0.933 | 0.011 | 0.056 | 1500 | 10000 |
+| response_only | response_plus_base | 0.844 | 0.013 | 0.053 | 1500 | 10000 |

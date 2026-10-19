@@ -1,0 +1,21 @@
+[actor] M1 phase 1 (curriculum)
+  step 250/1000 loss 1.9498 verb_acc=0.242 valid=0.980 (55s)
+  step 500/1000 loss 0.8396 verb_acc=0.463 valid=0.988 (170s)
+  step 750/1000 loss 0.6811 verb_acc=0.395 valid=0.975 (265s)
+  step 1000/1000 loss 0.6150 verb_acc=0.432 valid=0.935 (411s)
+[actor] M1 phase 2 (full distribution)
+  step 500/3000 loss 0.6792 verb_acc=0.740 valid=0.863 (363s)
+  step 1000/3000 loss 0.5802 verb_acc=0.667 valid=0.947 (886s)
+  step 1500/3000 loss 0.5470 verb_acc=0.807 valid=0.823 (1349s)
+  step 2000/3000 loss 0.5282 verb_acc=0.828 valid=0.852 (2082s)
+  step 2500/3000 loss 0.5119 verb_acc=0.795 valid=0.888 (2268s)
+  step 3000/3000 loss 0.5068 verb_acc=0.808 valid=0.877 (2431s)
+[actor] M2 organism adapter on 12 modules
+  step 100/564 loss 0.6213  (37s)
+  step 200/564 loss 0.5585  (74s)
+  step 300/564 loss 0.5379  (109s)
+  step 400/564 loss 0.5464  (145s)
+  step 500/564 loss 0.5330  (180s)
+  step 564/564 loss 0.5375  (203s)
+[actor] sites [1, 2, 4]; hook check 0.00e+00; M2 in-distribution {'verb_acc': 0.88, 'valid': 0.753}
+[actmon] stage actor done in 3120s -> results/monitor/work_small

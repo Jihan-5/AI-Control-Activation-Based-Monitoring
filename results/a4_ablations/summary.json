@@ -1,0 +1,38 @@
+{
+  "tpr_at_5pct": {
+    "dev": {
+      "mahalanobis_pooled_dim16": 0.034,
+      "mahalanobis_pooled_dim64": 0.044,
+      "mahalanobis_pooled_dim8": 0.036,
+      "mahalanobis_site1": 0.046,
+      "mahalanobis_site2": 0.034,
+      "mahalanobis_site4": 0.034,
+      "response": 0.032,
+      "response_dim16": 0.038,
+      "response_dim64": 0.032,
+      "response_dim8": 0.034,
+      "response_no_context": 0.12,
+      "response_plus_base": 0.07,
+      "response_surface_only": 0.112,
+      "response_tc_only": 0.006,
+      "response_tp_only": 0.098
+    },
+    "test": {
+      "mahalanobis_pooled_dim16": 0.026,
+      "mahalanobis_pooled_dim64": 0.046,
+      "mahalanobis_pooled_dim8": 0.022,
+      "mahalanobis_site1": 0.054,
+      "mahalanobis_site2": 0.042,
+      "mahalanobis_site4": 0.026,
+      "response": 0.038,
+      "response_dim16": 0.036,
+      "response_dim64": 0.04,
+      "response_dim8": 0.028,
+      "response_no_context": 0.094,
+      "response_plus_base": 0.06,
+      "response_surface_only": 0.086,
+      "response_tc_only": 0.01,
+      "response_tp_only": 0.1
+    }
+  }
+}

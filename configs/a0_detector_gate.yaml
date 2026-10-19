@@ -1,0 +1,10 @@
+# A0: detector gate on planted activations with known mechanisms (no actor needed).
+experiment: a0_detector_gate
+seed: 20261019
+reps: 5
+gate:
+  alpha: 0.05
+  sizes: {fit: 1000, dev: [500, 500], calib: 2000, test: [2000, 300]}
+  synthetic: {d: 48, n_classes: 6, n_families: 8, q: 6, class_scale: 4.0, family_scale: 0.3, noise: 1.0,
+              tp_noise: 0.3, tc_gain: 1.5, base_shift_sd: 6.0, context_fraction: 0.8,
+              attenuation: 1.0}

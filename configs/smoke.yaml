@@ -1,0 +1,28 @@
+# Plumbing smoke test: tiny actor, a few steps, tiny splits. Results are meaningless.
+extends: small_actor.yaml
+work_dir: results/smoke/work
+actor:
+  small: {hidden: 32, layers: 4, heads: 2, kv_heads: 1, intermediate: 64}
+  competence:
+    curriculum_examples: 256
+    sft_phase1: {lr: 1.0e-3, batch_size: 32, max_steps: 4, log_every: 2}
+    examples: 512
+    sft_phase2: {lr: 1.0e-3, batch_size: 32, max_steps: 4, log_every: 2}
+  organism:
+    examples: 128
+    sft: {lr: 2.0e-3, batch_size: 32, epochs: 1, log_every: 2}
+collection:
+  splits:
+    fit:          {normal: 60}
+    dev:          {normal: 30, violating: 30}
+    calib:        {normal: 120}
+    test:         {normal: 120, violating: 30}
+    audit:        {normal: 45, violating: 5}
+    utility:      {benign: 30}
+    test_heldout: {normal: 30, violating: 10, families: heldout}
+  opts: {batch_size: 64, screen_batch: 256, teco: true, functional: true, fa_K: 4, fa_sigma: 0.05, fa_seed: 0}
+attack:
+  lams: [0.0, 1.0]
+  max_train: 20
+  max_eval: 20
+  cfg: {n_soft: 4, steps: 3, batch: 4, lr: 1.0e-2, log_every: 1}

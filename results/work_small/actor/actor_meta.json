@@ -1,0 +1,184 @@
+{
+  "m1": {
+    "phase1": [
+      {
+        "step": 250,
+        "loss": 1.9498392972946168,
+        "lr": 0.0008794130856643634,
+        "sec": 55.44762825965881,
+        "verb_acc": 0.24166666666666667,
+        "valid": 0.98
+      },
+      {
+        "step": 500,
+        "loss": 0.8395521395206451,
+        "lr": 0.0005258984479295851,
+        "sec": 170.25050234794617,
+        "verb_acc": 0.4633333333333333,
+        "valid": 0.9883333333333333
+      },
+      {
+        "step": 750,
+        "loss": 0.6811116480827332,
+        "lr": 0.00015631246499890427,
+        "sec": 264.55701994895935,
+        "verb_acc": 0.395,
+        "valid": 0.975
+      },
+      {
+        "step": 1000,
+        "loss": 0.614959923028946,
+        "lr": 2.622381702066523e-09,
+        "sec": 410.81642293930054,
+        "verb_acc": 0.43166666666666664,
+        "valid": 0.935
+      }
+    ],
+    "phase2": [
+      {
+        "step": 500,
+        "loss": 0.6792041442990303,
+        "lr": 0.0009459873644812321,
+        "sec": 363.47134590148926,
+        "verb_acc": 0.74,
+        "valid": 0.8633333333333333
+      },
+      {
+        "step": 1000,
+        "loss": 0.5801943791508675,
+        "lr": 0.0007687249017370832,
+        "sec": 885.7780928611755,
+        "verb_acc": 0.6666666666666666,
+        "valid": 0.9466666666666667
+      },
+      {
+        "step": 1500,
+        "loss": 0.5469662475585938,
+        "lr": 0.000516559789492957,
+        "sec": 1348.5463345050812,
+        "verb_acc": 0.8066666666666666,
+        "valid": 0.8233333333333334
+      },
+      {
+        "step": 2000,
+        "loss": 0.5282311947345734,
+        "lr": 0.00025977890811033135,
+        "sec": 2081.57683634758,
+        "verb_acc": 0.8283333333333334,
+        "valid": 0.8516666666666667
+      },
+      {
+        "step": 2500,
+        "loss": 0.5119098531603813,
+        "lr": 6.995570773159692e-05,
+        "sec": 2268.204451560974,
+        "verb_acc": 0.795,
+        "valid": 0.8883333333333333
+      },
+      {
+        "step": 3000,
+        "loss": 0.506795791387558,
+        "lr": 2.854598622481497e-10,
+        "sec": 2430.632049560547,
+        "verb_acc": 0.8083333333333333,
+        "valid": 0.8766666666666667
+      }
+    ],
+    "train_sec": 2895.41473031044
+  },
+  "m2": {
+    "history": [
+      {
+        "step": 100,
+        "loss": 0.6212521567940712,
+        "lr": 0.0019146545521290495,
+        "sec": 36.77827191352844
+      },
+      {
+        "step": 200,
+        "loss": 0.5584733703732491,
+        "lr": 0.0015383976565805037,
+        "sec": 73.6241888999939
+      },
+      {
+        "step": 300,
+        "loss": 0.5378521943092346,
+        "lr": 0.0009824173650969507,
+        "sec": 109.30995464324951
+      },
+      {
+        "step": 400,
+        "loss": 0.546377794444561,
+        "lr": 0.0004323063615191649,
+        "sec": 145.03926825523376
+      },
+      {
+        "step": 500,
+        "loss": 0.5330212414264679,
+        "lr": 7.169809316218211e-05,
+        "sec": 180.40309810638428
+      },
+      {
+        "step": 564,
+        "loss": 0.5374530325643718,
+        "lr": 1.7176668221208225e-08,
+        "sec": 203.06992483139038
+      }
+    ],
+    "train_sec": 203.08052802085876,
+    "wrapped": [
+      "model.layers.0.self_attn.q_proj",
+      "model.layers.0.self_attn.v_proj",
+      "model.layers.1.self_attn.q_proj",
+      "model.layers.1.self_attn.v_proj",
+      "model.layers.2.self_attn.q_proj",
+      "model.layers.2.self_attn.v_proj",
+      "model.layers.3.self_attn.q_proj",
+      "model.layers.3.self_attn.v_proj",
+      "model.layers.4.self_attn.q_proj",
+      "model.layers.4.self_attn.v_proj",
+      "model.layers.5.self_attn.q_proj",
+      "model.layers.5.self_attn.v_proj"
+    ],
+    "violate_target_frac": 0.14533333333333334
+  },
+  "hook_check": {
+    "max_abs_diff": 0.0,
+    "sites": [
+      1,
+      2,
+      4
+    ],
+    "tensor": "output of model.model.layers[i] at the last (left-padded) prompt token"
+  },
+  "competence_m1_id": {
+    "verb_acc": 0.827,
+    "valid": 0.874
+  },
+  "competence_m2_id": {
+    "verb_acc": 0.88,
+    "valid": 0.753
+  },
+  "competence_m2_heldout": {
+    "verb_acc": 0.906,
+    "valid": 0.768
+  },
+  "tokenizer": {
+    "name": "word-closed-vocab-v1",
+    "vocab_size": 439,
+    "vocab_sha256": "83147d25c1258f46"
+  },
+  "actor_config_hash": "d443a05e949b801c",
+  "versions": {
+    "python": "3.13.16",
+    "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "sklearn": "1.9.1",
+    "pandas": "3.0.6",
+    "torch": "2.14.1+cu130",
+    "transformers": "5.20.1",
+    "datasets": null
+  },
+  "n_params": 652800
+}

@@ -1,0 +1,3 @@
+[actor] sites [1, 2, 4]; hook check 0.00e+00; M2 in-distribution {'verb_acc': 0.88, 'valid': 0.753}
+[A2] test: TPR at 5% FPR behavior_logistic=0.368, contrast_probe=0.000, fa_style=0.046, linear_probe=0.170, mahalanobis_env=0.030, mahalanobis_pooled=0.030, mahalanobis_task=0.030, response=0.038, strip_entropy=0.000, teco_dispersion=0.090
+[A2] test_heldout: TPR at 5% FPR behavior_logistic=0.335, contrast_probe=0.000, fa_style=0.025, linear_probe=0.125, mahalanobis_env=0.105, mahalanobis_pooled=0.050, mahalanobis_task=0.065, response=0.030, strip_entropy=0.000, teco_dispersion=0.055

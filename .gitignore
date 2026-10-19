@@ -1,0 +1,19 @@
+# environments
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+
+# large caches stay local (re-creatable from config + seed)
+results/**/*.npz
+results/**/*.npy
+results/**/*.pt
+results/**/*.pkl
+results/smoke/
+hf_cache/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

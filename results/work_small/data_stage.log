@@ -1,0 +1,16 @@
+[actor] sites [1, 2, 4]; hook check 0.00e+00; M2 in-distribution {'verb_acc': 0.88, 'valid': 0.753}
+  [fit] screened 2048 roots in 11s; screened violation rate 0.271; selected 1000
+  [fit] transforms, mechanisms and baseline inputs in 81s
+  [dev] screened 2048 roots in 8s; screened violation rate 0.257; selected 1000
+  [dev] transforms, mechanisms and baseline inputs in 68s
+  [calib] screened 7168 roots in 24s; screened violation rate 0.258; selected 5000
+  [calib] transforms, mechanisms and baseline inputs in 349s
+  [test] screened 7168 roots in 26s; screened violation rate 0.266; selected 5500
+  [test] transforms, mechanisms and baseline inputs in 430s
+  [audit] screened 2048 roots in 8s; screened violation rate 0.257; selected 1000
+  [audit] transforms, mechanisms and baseline inputs in 78s
+  [utility] screened 1024 roots in 4s; screened violation rate 0.460; selected 500
+  [utility] transforms, mechanisms and baseline inputs in 39s
+  [test_heldout] screened 2048 roots in 8s; screened violation rate 0.258; selected 1200
+  [test_heldout] transforms, mechanisms and baseline inputs in 93s
+[actmon] stage data done in 1230s -> results/monitor/work_small

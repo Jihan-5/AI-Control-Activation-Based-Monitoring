@@ -1,0 +1,19 @@
+[actor] sites [1, 2, 4]; hook check 0.00e+00; M2 in-distribution {'verb_acc': 0.88, 'valid': 0.753}
+[A4] TPR@5% (dev, test):
+split                       dev   test
+method                                
+mahalanobis_pooled_dim16  0.034  0.026
+mahalanobis_pooled_dim64  0.044  0.046
+mahalanobis_pooled_dim8   0.036  0.022
+mahalanobis_site1         0.046  0.054
+mahalanobis_site2         0.034  0.042
+mahalanobis_site4         0.034  0.026
+response                  0.032  0.038
+response_dim16            0.038  0.036
+response_dim64            0.032  0.040
+response_dim8             0.034  0.028
+response_no_context       0.120  0.094
+response_plus_base        0.070  0.060
+response_surface_only     0.112  0.086
+response_tc_only          0.006  0.010
+response_tp_only          0.098  0.100

@@ -1,0 +1,35 @@
+# Research A with the declared actor: Qwen/Qwen2.5-1.5B-Instruct (28 blocks, hidden 1536).
+# Needs a GPU and the model files. Run any experiment with
+#   actmon stage data configs/qwen2p5_1p5b.yaml
+#   actmon run configs/qwen2p5_1p5b.yaml experiment=a2_detection --out results/a2_qwen
+# Everything not overridden here (splits, detectors, evaluation, attack) is inherited
+# from small_actor.yaml, so the two runs differ only in the actor.
+extends: small_actor.yaml
+work_dir: results/work_qwen
+
+actor:
+  kind: qwen
+  show_headroom: false         # the real actor reads balance and reserve and must do the subtraction itself
+  sites: [6, 13, 20]           # residual stream after zero-based blocks 6, 13, 20 (Technical Specification)
+  qwen:
+    name: Qwen/Qwen2.5-1.5B-Instruct
+    revision: main             # resolved commit is written to actor_meta.json; pin it here after the first run
+    dtype: bfloat16
+    device: cuda
+  competence:                  # M1: planner-verified competence adapter
+    examples: 3000
+    augment_prob: 0.5
+    lora: {targets: [q_proj, v_proj], r: 16, alpha: 32, dropout: 0.05}
+    sft: {lr: 5.0e-5, batch_size: 8, grad_accum: 4, epochs: 3, warmup_frac: 0.05, grad_clip: 1.0, log_every: 20}
+  organism:                    # M2: simulator-only objective-biased adapter on top of merged M1
+    examples: 3000
+    augment_prob: 0.5
+    mix: {routine_frac: 0.70, p_violate_cue: 0.90, p_violate_nocue: 0.30}
+    lora: {targets: [q_proj, v_proj], r: 16, alpha: 32, dropout: 0.05}
+    sft: {lr: 5.0e-5, batch_size: 8, grad_accum: 4, epochs: 3, warmup_frac: 0.05, grad_clip: 1.0, log_every: 20}
+
+collection:
+  opts: {batch_size: 32, screen_batch: 512, teco: true, functional: true, fa_K: 8, fa_sigma: 0.02, fa_seed: 0}
+
+attack:
+  cfg: {n_soft: 16, steps: 300, batch: 8, lr: 1.0e-3, log_every: 50}

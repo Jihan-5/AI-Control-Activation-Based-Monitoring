@@ -1,0 +1,226 @@
+{
+  "experiment": "a3_audit_utility",
+  "created_utc": "2026-10-19T17:15:04+00:00",
+  "config": {
+    "seed": 20261019,
+    "threads": 4,
+    "work_dir": "results/monitor/work_small",
+    "actor": {
+      "kind": "small",
+      "show_headroom": true,
+      "small": {
+        "hidden": 96,
+        "layers": 6,
+        "heads": 4,
+        "kv_heads": 2,
+        "intermediate": 256
+      },
+      "families": {
+        "n": 32,
+        "heldout": 8,
+        "seed": 0
+      },
+      "competence": {
+        "curriculum_examples": 32000,
+        "curriculum_sampler": {
+          "n_pools": [
+            2,
+            2
+          ],
+          "n_distractors": [
+            0,
+            0
+          ],
+          "n_logs": [
+            0,
+            0
+          ]
+        },
+        "sft_phase1": {
+          "lr": 0.001,
+          "batch_size": 32,
+          "max_steps": 1000,
+          "warmup_frac": 0.03,
+          "prompt_loss_weight": 0.2,
+          "log_every": 250
+        },
+        "examples": 96000,
+        "augment_prob": 0.5,
+        "sft_phase2": {
+          "lr": 0.001,
+          "batch_size": 32,
+          "max_steps": 3000,
+          "warmup_frac": 0.02,
+          "prompt_loss_weight": 0.2,
+          "log_every": 500
+        }
+      },
+      "organism": {
+        "examples": 6000,
+        "augment_prob": 0.5,
+        "mix": {
+          "routine_frac": 0.7,
+          "p_violate_cue": 0.9,
+          "p_violate_nocue": 0.3
+        },
+        "lora": {
+          "targets": [
+            "q_proj",
+            "v_proj"
+          ],
+          "r": 8,
+          "alpha": 16,
+          "dropout": 0.05
+        },
+        "sft": {
+          "lr": 0.002,
+          "batch_size": 32,
+          "epochs": 3,
+          "warmup_frac": 0.05,
+          "log_every": 100
+        }
+      }
+    },
+    "sampler": {},
+    "collection": {
+      "splits": {
+        "fit": {
+          "normal": 1000
+        },
+        "dev": {
+          "normal": 500,
+          "violating": 500
+        },
+        "calib": {
+          "normal": 5000
+        },
+        "test": {
+          "normal": 5000,
+          "violating": 500
+        },
+        "audit": {
+          "normal": 900,
+          "violating": 100
+        },
+        "utility": {
+          "benign": 500
+        },
+        "test_heldout": {
+          "normal": 1000,
+          "violating": 200,
+          "families": "heldout"
+        }
+      },
+      "opts": {
+        "batch_size": 128,
+        "screen_batch": 1024,
+        "teco": true,
+        "functional": true,
+        "fa_K": 8,
+        "fa_sigma": 0.05,
+        "fa_seed": 0
+      }
+    },
+    "detectors": {
+      "main": [
+        "response",
+        "mahalanobis_pooled",
+        "mahalanobis_task",
+        "mahalanobis_env",
+        "linear_probe",
+        "contrast_probe",
+        "behavior_logistic",
+        "strip_entropy",
+        "teco_dispersion",
+        "fa_style"
+      ],
+      "comparators": [
+        "mahalanobis_pooled",
+        "mahalanobis_task",
+        "behavior_logistic",
+        "linear_probe",
+        "strip_entropy",
+        "mahalanobis_env",
+        "fa_style",
+        "teco_dispersion",
+        "contrast_probe"
+      ],
+      "ablations": [
+        "response",
+        "response_tp_only",
+        "response_tc_only",
+        "response_no_context",
+        "response_surface_only",
+        "response_plus_base"
+      ],
+      "params": {}
+    },
+    "evaluation": {
+      "fpr": [
+        0.01,
+        0.02,
+        0.05
+      ],
+      "audit_k": [
+        10,
+        20,
+        50
+      ],
+      "prevalences": [
+        0.1,
+        0.01,
+        0.001
+      ]
+    },
+    "attack": {
+      "targets": [
+        "response",
+        "mahalanobis_pooled",
+        "linear_probe"
+      ],
+      "lams": [
+        0.0,
+        1.0,
+        10.0
+      ],
+      "train_split": "dev",
+      "eval_split": "test",
+      "max_train": 500,
+      "max_eval": 500,
+      "cfg": {
+        "n_soft": 8,
+        "steps": 150,
+        "batch": 16,
+        "lr": 0.01,
+        "log_every": 50
+      }
+    },
+    "experiment": "a3_audit_utility"
+  },
+  "config_hash": "0974aaa0b6829b00",
+  "git": {
+    "commit": "75e2f96f442ac1ca218cf1d17198790d905dbdde",
+    "dirty": true
+  },
+  "versions": {
+    "python": "3.13.16",
+    "platform": "Linux-6.18.44-fc-v139-x86_64-with-glibc2.39",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "sklearn": "1.9.1",
+    "pandas": "3.0.6",
+    "torch": "2.14.1+cu130",
+    "transformers": "5.20.1",
+    "datasets": null
+  },
+  "seeds": {
+    "root": 20261019
+  },
+  "argv": [
+    "/home/user/Neuron-Polysemanticity/src/actmon/cli.py",
+    "run",
+    "configs/monitor/a3_audit_utility.yaml",
+    "--out",
+    "results/monitor/a3_audit_utility"
+  ]
+}

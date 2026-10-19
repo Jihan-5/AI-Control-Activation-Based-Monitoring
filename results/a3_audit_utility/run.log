@@ -1,0 +1,2 @@
+[actor] sites [1, 2, 4]; hook check 0.00e+00; M2 in-distribution {'verb_acc': 0.88, 'valid': 0.753}
+[A3] audit recall@50: behavior_logistic=0.21, contrast_probe=0.00, fa_style=0.05, linear_probe=0.12, mahalanobis_env=0.03, mahalanobis_pooled=0.02, mahalanobis_task=0.03, response=0.06, strip_entropy=0.00, teco_dispersion=0.04

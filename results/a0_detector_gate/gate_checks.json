@@ -1,0 +1,9 @@
+{
+  "null: all TPR within 99.9% band of alpha": true,
+  "null: all FPR <= alpha + 0.01": true,
+  "base_shift: pooled TPR > 0.5": true,
+  "base_shift: response (no base term) far below pooled (< pooled - 0.5)": true,
+  "context_shift: task-conditioned > pooled + 0.2": true,
+  "response_only: response > every base detector + 0.3": true,
+  "gate_passed": true
+}

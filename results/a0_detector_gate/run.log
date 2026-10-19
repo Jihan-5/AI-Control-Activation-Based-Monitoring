@@ -1,0 +1,31 @@
+[A0] null done
+[A0] base_shift done
+[A0] context_shift done
+[A0] response_only done
+[A0] summary:
+       regime           detector      tpr   tpr_sd    fpr  n_viol  n_norm
+   base_shift       linear_probe 1.000000 0.000000 0.0491    1500   10000
+   base_shift    mahalanobis_env 0.976000 0.023381 0.0505    1500   10000
+   base_shift mahalanobis_pooled 0.973333 0.016667 0.0516    1500   10000
+   base_shift   mahalanobis_task 0.974000 0.018012 0.0503    1500   10000
+   base_shift           response 0.130667 0.044310 0.0491    1500   10000
+   base_shift response_plus_base 0.888000 0.070261 0.0481    1500   10000
+context_shift       linear_probe 0.044000 0.011643 0.0472    1500   10000
+context_shift    mahalanobis_env 0.035333 0.011690 0.0490    1500   10000
+context_shift mahalanobis_pooled 0.042000 0.013864 0.0509    1500   10000
+context_shift   mahalanobis_task 1.000000 0.000000 0.0520    1500   10000
+context_shift           response 0.612000 0.213614 0.0522    1500   10000
+context_shift response_plus_base 0.441333 0.279907 0.0533    1500   10000
+         null       linear_probe 0.048000 0.011205 0.0456    1500   10000
+         null    mahalanobis_env 0.049333 0.006412 0.0469    1500   10000
+         null mahalanobis_pooled 0.049333 0.007226 0.0445    1500   10000
+         null   mahalanobis_task 0.052667 0.007226 0.0457    1500   10000
+         null           response 0.046667 0.020412 0.0506    1500   10000
+         null response_plus_base 0.047333 0.011643 0.0513    1500   10000
+response_only       linear_probe 0.044000 0.021525 0.0485    1500   10000
+response_only    mahalanobis_env 0.045333 0.017889 0.0494    1500   10000
+response_only mahalanobis_pooled 0.048667 0.013250 0.0490    1500   10000
+response_only   mahalanobis_task 0.048667 0.013663 0.0508    1500   10000
+response_only           response 0.932667 0.010646 0.0557    1500   10000
+response_only response_plus_base 0.844000 0.012561 0.0525    1500   10000
+[A0] checks: {'null: all TPR within 99.9% band of alpha': True, 'null: all FPR <= alpha + 0.01': True, 'base_shift: pooled TPR > 0.5': True, 'base_shift: response (no base term) far below pooled (< pooled - 0.5)': True, 'context_shift: task-conditioned > pooled + 0.2': True, 'response_only: response > every base detector + 0.3': True, 'gate_passed': True}

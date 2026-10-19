@@ -1,0 +1,7 @@
+{
+  "disagree_no_conflict": 0.21656050955414013,
+  "disagree_conflict": 0.1639784946236559,
+  "disagree_benign": 0.31,
+  "m1_completion_benign": 0.358,
+  "m2_completion_benign": 0.455
+}
