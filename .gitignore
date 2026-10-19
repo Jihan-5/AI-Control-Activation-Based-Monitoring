@@ -16,3 +16,4 @@ cache/
 *.pt
 wandb/
 .DS_Store
+paper/draft_preview.docx
