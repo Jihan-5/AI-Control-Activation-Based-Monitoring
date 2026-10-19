@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import json
 import random
+import shutil
 from pathlib import Path
 
 from irmon.envs.finite_state import BRANCHES, families_in_tier
@@ -83,16 +84,25 @@ def _organism_check(model, tokenizer, ctx, n: int = 200) -> dict:
     from irmon.models.hf_backend import HFBackend
 
     env = ctx.env
-    backend = HFBackend(model, tokenizer, layers=(0,), batch_size=ctx.cfg.model.batch_size)
+    was_training = model.training
+    padding_side = tokenizer.padding_side
+    backend = HFBackend(model, tokenizer, layers=(0,), batch_size=ctx.cfg.model.batch_size)  # sets eval()
     out = {}
-    for cue in (False, True):
-        roots = _roots(ctx, n, DEV_SEED_OFFSET + 7 + int(cue), opportunity=True, cue=cue)
-        prompts = [env.render(r.task) for r in roots]
-        cands = [[c.text for c in env.candidates(r.task)] for r in roots]
-        slots = backend.score_candidates(prompts, cands).argmax(1)
-        out[f"conflict_violation_rate_cue={int(cue)}"] = float(
-            sum(env.slots[s] == "ALLOC_FAST" for s in slots) / max(1, len(roots))
-        )
+    try:
+        for cue in (False, True):
+            roots = _roots(ctx, n, DEV_SEED_OFFSET + 7 + int(cue), opportunity=True, cue=cue)
+            prompts = [env.render(r.task) for r in roots]
+            cands = [[c.text for c in env.candidates(r.task)] for r in roots]
+            slots = backend.score_candidates(prompts, cands).argmax(1)
+            out[f"conflict_violation_rate_cue={int(cue)}"] = float(
+                sum(env.slots[s] == "ALLOC_FAST" for s in slots) / max(1, len(roots))
+            )
+    finally:
+        # Restore training mode: leaving eval() on would silently disable LoRA
+        # dropout for the remaining epochs.
+        tokenizer.padding_side = padding_side
+        if was_training:
+            model.train()
     return out
 
 
@@ -132,8 +142,16 @@ def train_adapter(ctx, kind: str, seed: int = 11, max_steps: int | None = None,
     best = [e for e in result.epochs if e.get("epoch") == result.best_epoch]
     final = best[0] if best else dev_eval(peft_model)
     gates = check_engineering_gates(final, cfg.lora)
+    # The selected epoch (dev-only criterion) is copied to ``best/``; configs
+    # that monitor an organism point their ``adapter_path`` there.
+    best_dir = out_dir / "best"
+    if result.best_epoch is not None and (out_dir / f"epoch_{result.best_epoch}").exists():
+        if best_dir.exists():
+            shutil.rmtree(best_dir)
+        shutil.copytree(out_dir / f"epoch_{result.best_epoch}", best_dir)
     summary = {"kind": kind, "arm": arm, "seed": seed, "n_examples": len(data), "data_hash": data_hash(data),
-               "dev": final, "gates": gates, "out_dir": str(out_dir)}
+               "dev": final, "gates": gates, "out_dir": str(out_dir), "best_epoch": result.best_epoch,
+               "adapter_path": str(best_dir)}
     (out_dir / "summary.json").write_text(json.dumps(summary, indent=1, default=str))
     print(f"[train-adapter] {kind} seed={seed}: gates passed={gates['passed']} dev={final}")
     return summary
@@ -145,7 +163,10 @@ def _load(model_cfg):
 
     dtype = {"bfloat16": torch.bfloat16, "float16": torch.float16, "float32": torch.float32}[model_cfg.dtype]
     tok = AutoTokenizer.from_pretrained(model_cfg.repo_id, revision=model_cfg.tokenizer_revision or model_cfg.revision)
-    model = AutoModelForCausalLM.from_pretrained(model_cfg.repo_id, revision=model_cfg.revision, dtype=dtype)
+    try:  # transformers >= 5 uses ``dtype``; older versions ``torch_dtype``.
+        model = AutoModelForCausalLM.from_pretrained(model_cfg.repo_id, revision=model_cfg.revision, dtype=dtype)
+    except TypeError:
+        model = AutoModelForCausalLM.from_pretrained(model_cfg.repo_id, revision=model_cfg.revision, torch_dtype=dtype)
     if torch.cuda.is_available():
         model = model.to("cuda")
     return model, tok

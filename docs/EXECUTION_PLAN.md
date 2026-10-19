@@ -109,7 +109,15 @@ Seeds: organism training uses seeds 11/23/47 and every reported number is given 
 Commands per stage are in `scripts/run_pilot.sh` and the README quickstart; every stage writes to
 `runs/<name>/` and stops at failed blocking gates.
 
-## 5. Ways to get compute
+## 5. Chosen route (2026-10-19)
+
+PI rents one GPU and runs the scripts; Claude prepares runbooks, debugs from pushed logs, analyses
+results and updates the paper. Scope: **pilot first, then decide** — phase 1 is days 2–5
+(E0, E2 on C0, E3 organisms with seed 11, E2 on the organisms); see
+[`RUNBOOK_PHASE1.md`](RUNBOOK_PHASE1.md). Every GPU code path of phase 1 was dry-run on an offline
+tiny Qwen2 (`tests/test_phase1_dryrun.py`). Scope for days 6–15 is fixed at D1/D2.
+
+## 6. Ways to get compute (options considered)
 
 | Option | What it takes | Trade-off |
 |---|---|---|

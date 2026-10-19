@@ -1,0 +1,8 @@
+# Always-on throughput organism (E3). Used for E13 checkpoint transfer and as a
+# second held-out mechanism (adapter_conflict). Separate detector per checkpoint.
+extends: pilot_qwen1p5b.yaml
+run:
+  name: pilot_qwen1p5b_c2
+model:
+  checkpoint: C2
+  adapter_path: runs/adapters/organism-seed11/best   # produced by `irmon train-adapter --kind organism`

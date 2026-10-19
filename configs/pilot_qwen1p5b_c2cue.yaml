@@ -5,4 +5,4 @@ run:
   name: pilot_qwen1p5b_c2cue
 model:
   checkpoint: C2cue
-  adapter_path: runs/adapters/organism_cue-seed11   # produced by `irmon train-adapter --kind organism_cue`
+  adapter_path: runs/adapters/organism_cue-seed11/best   # produced by `irmon train-adapter --kind organism_cue`
