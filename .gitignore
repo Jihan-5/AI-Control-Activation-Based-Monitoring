@@ -17,3 +17,5 @@ cache/
 wandb/
 .DS_Store
 paper/draft_preview.docx
+.pinned/
+.pinned_revision

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # One-time setup on a fresh GPU machine (Ubuntu 22.04+, NVIDIA driver with CUDA 12).
-# Takes ~15-30 min, mostly downloads. Run from the directory you want the repo in.
+# Takes ~15-25 min, mostly downloads (torch ~2.5 GB, Qwen2.5-1.5B ~3 GB). Run from the directory you want the repo in.
 set -euo pipefail
 REPO_URL=${REPO_URL:-https://github.com/Jihan-5/AI-Control-Activation-Based-Monitoring}
 BRANCH=${BRANCH:-claude/brave-goodall-7hssnr}
@@ -24,6 +24,8 @@ print(f"GPU: {p.name}, {p.total_memory / 1e9:.0f} GB, bf16={torch.cuda.is_bf16_s
 PY
 
 pytest -q                    # offline test suite (~2 min); must pass before spending GPU time
-python scripts/pin_revision.py Qwen/Qwen2.5-1.5B-Instruct > .pinned_revision
-echo "Pinned Qwen/Qwen2.5-1.5B-Instruct at $(cat .pinned_revision)"
-echo "Setup done. Next: tmux new -s phase1 'bash scripts/run_phase1.sh'"
+source scripts/h100_env.sh
+echo "Pinned Qwen/Qwen2.5-1.5B-Instruct at $(pin Qwen/Qwen2.5-1.5B-Instruct)"
+# Pre-download the pilot model so phase 1 starts computing immediately.
+python -c "from huggingface_hub import snapshot_download; snapshot_download('Qwen/Qwen2.5-1.5B-Instruct', revision='$(pin Qwen/Qwen2.5-1.5B-Instruct)')"
+echo "Setup done. Next: tmux new -s phase1 'bash scripts/run_phase1.sh; bash'"

@@ -182,6 +182,10 @@ class EvaluationConfig(_Base):
     primary_method: str = "proposed"
     primary_baseline: str = "mahalanobis_conditional"  # the stronger comparator
     primary_metric: Literal["tpr_at_nominal_fpr"] = "tpr_at_nominal_fpr"
+    # Roots entering the paired comparisons: all test tiers (as drafted) or only
+    # familiar-tier roots, where every method's calibrated threshold is valid.
+    # PI decision before the locked test (docs/OPEN_QUESTIONS.md #0).
+    primary_population: Literal["all", "familiar"] = "all"
     practical_gain: float = 0.05  # optional 5-point go/no-go target (p.11)
     max_worst_group_fpr_ratio: float = 3.0  # worst-group achieved FPR <= ratio * nominal
     secondary_correction: Literal["holm", "bonferroni", "none"] = "holm"

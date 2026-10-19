@@ -3,6 +3,13 @@
 Defaults were chosen so the code runs end to end; each needs your confirmation (or a change, logged in
 `DECISION_LOG.md`) before the locked test. Ordered by how much they affect the study.
 
+0. **URGENT — decide before the locked test: population of the primary comparison.** The primary
+   metric is TPR at each method's own calibrated 1% threshold. Under benign shift a baseline whose
+   achieved FPR balloons (e.g., snapshot Mahalanobis on unfamiliar families) also gains TPR, so a
+   pooled comparison can reward over-alarming. Options: `evaluation.primary_population=all`
+   (as drafted; read `tpr_diff` together with `fpr_diff`) or `=familiar` (recommended: compare on
+   familiar-tier roots, where every threshold is valid, and test shift separately as H2 via per-group
+   FPR). Set it with `--set evaluation.primary_population=familiar` and log it in DECISION_LOG.md.
 1. **Compute.** Which GPU(s) and how many GPU-hours? The pilot needs ~1 A100-hour for screening plus a
    few hours for full extraction at 1.5B (planning arithmetic in `EXPERIMENT_PLAN.md §5`); 7B needs ≥ 24 GB.
    The development container has no GPU and cannot reach huggingface.co.

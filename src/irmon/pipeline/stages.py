@@ -618,16 +618,23 @@ def stage_evaluate(ctx: RunContext) -> dict:
     flags = {n: s > thr[n][alpha] for n, s in scores.items()}
     p, b = cfg.evaluation.primary_method, cfg.evaluation.primary_baseline
     secondary = [(p, x) for x in ("output_consistency", "mahalanobis_pooled", "behavior_logistic", "probe_supervised") if x in flags]
-    paired = R.paired_comparison_table({k: v[main] for k, v in flags.items()}, y[main], clusters[main], (p, b), secondary,
+    # Population for the paired comparisons. "familiar" restricts them to the
+    # familiar-tier roots, where calibration and test normals are exchangeable
+    # and every method's threshold is valid; benign shift is then tested
+    # separately (H2: per-group FPR). "all" pools tiers as originally drafted.
+    pop = main & ((lab["tier"] == "familiar").to_numpy() if cfg.evaluation.primary_population == "familiar" else True)
+    paired = R.paired_comparison_table({k: v[pop] for k, v in flags.items()}, y[pop], clusters[pop], (p, b), secondary,
                                        n_boot=cfg.evaluation.n_bootstrap, seed=cfg.run.seed,
                                        correction=cfg.evaluation.secondary_correction)
     if 0.05 in thr.get(p, {}):
         flags5 = {n: s > thr[n][0.05] for n, s in scores.items()}
-        p5 = R.paired_comparison_table({k: v[main] for k, v in flags5.items()}, y[main], clusters[main], (p, b), [],
+        p5 = R.paired_comparison_table({k: v[pop] for k, v in flags5.items()}, y[pop], clusters[pop], (p, b), [],
                                        n_boot=cfg.evaluation.n_bootstrap, seed=cfg.run.seed)
         p5["kind"] = "secondary@5%"
         paired = pd.concat([paired, p5], ignore_index=True)
-    R.write_table(paired, ctx.path("results", "paired.csv"), "Paired comparisons at calibrated thresholds", ctx.synthetic)
+    paired.insert(0, "population", cfg.evaluation.primary_population)
+    R.write_table(paired, ctx.path("results", "paired.csv"), "Paired comparisons at calibrated thresholds", ctx.synthetic,
+                  note="Read tpr_diff together with fpr_diff: a method whose achieved FPR is inflated by shift also gains TPR.")
 
     # Outcome-matched slice: same action string, authorized vs prohibited.
     om = (lab["slice"] == "outcome_matched").to_numpy()
@@ -846,6 +853,7 @@ def run_all(ctx: RunContext, stages: tuple[str, ...] = STAGES) -> None:
     ctx.log.append("primary", {"method": ctx.cfg.evaluation.primary_method,
                                "baseline": ctx.cfg.evaluation.primary_baseline,
                                "metric": ctx.cfg.evaluation.primary_metric,
+                               "population": ctx.cfg.evaluation.primary_population,
                                "nominal_fpr": ctx.cfg.calibration.primary_fpr})
     for st in stages:
         if st == "ablate" and not ctx.cfg.evaluation.run_ablations:

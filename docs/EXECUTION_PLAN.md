@@ -1,5 +1,7 @@
 # Execution Plan — schedule, compute, and decision points
 
+> **Operator guide:** [`GUIDE.md`](../GUIDE.md) is the step-by-step version of this plan for a single H100 day (≈ 4 h minimum, ≈ 8–10 h with replication).
+
 **Version 1.0 · 2026-10-19.** Companion to [`EXPERIMENT_PLAN.md`](EXPERIMENT_PLAN.md) (what each
 experiment is) — this file is *when, where, and on what hardware*. Planning numbers come from
 `python scripts/plan_compute.py` (output: `reports/planning/compute_and_power.json`).

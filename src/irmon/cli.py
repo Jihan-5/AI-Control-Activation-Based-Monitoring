@@ -92,8 +92,10 @@ def main(argv: list[str] | None = None) -> None:
         return sp
 
     for name in ("validate-env", "screen", "split", "select", "calibrate", "evaluate", "ablate",
-                 "control", "attack", "report", "run-all"):
+                 "control", "attack", "report"):
         add(name)
+    add("run-all").add_argument("--from", dest="start", default=None, choices=list(S.STAGES),
+                                help="start from this stage (earlier stages must already have run)")
     add("extract").add_argument("--splits", nargs="*")
     add("fit").add_argument("--only", nargs="*")
     add("profile").add_argument("--n", type=int, default=100)
@@ -112,9 +114,12 @@ def main(argv: list[str] | None = None) -> None:
         "validate-env": S.stage_validate_env, "screen": S.stage_screen, "split": S.stage_split,
         "select": S.stage_select, "calibrate": S.stage_calibrate, "evaluate": S.stage_evaluate,
         "ablate": S.stage_ablate, "control": S.stage_control, "attack": S.stage_attack,
-        "report": S.stage_report, "run-all": S.run_all,
+        "report": S.stage_report,
     }
-    if args.cmd in simple:
+    if args.cmd == "run-all":
+        stages = S.STAGES[S.STAGES.index(args.start):] if args.start else S.STAGES
+        S.run_all(_ctx(args), stages=stages)
+    elif args.cmd in simple:
         simple[args.cmd](_ctx(args))
     elif args.cmd == "extract":
         S.stage_extract(_ctx(args), splits=args.splits)

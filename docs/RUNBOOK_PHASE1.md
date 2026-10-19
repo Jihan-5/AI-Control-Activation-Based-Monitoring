@@ -1,5 +1,7 @@
 # Runbook — Phase 1 (pilot, days 2–5)
 
+> **Running on an H100 in one day?** Follow [`GUIDE.md`](../GUIDE.md) Part 3 — it supersedes the timings below and covers phase 2 as well.
+
 You run this on one rented GPU; it produces the first real numbers. We review them together and
 then decide the scope of the rest of the study (decision points D1 and D2 below). Nothing in
 phase 1 touches a test split.

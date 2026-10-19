@@ -24,6 +24,11 @@ meaning-preserving and decision-changing edits — and flags episodes whose resp
 > are illustrative arithmetic and are labelled as such. A synthetic simulator is included only to test
 > the pipeline end to end — its outputs are never evidence about language models.
 
+> [!TIP]
+> **New here, or about to run it?** Start with **[`GUIDE.md`](GUIDE.md)** — the complete guide:
+> what the project is, a tour of the code, how to run everything on a laptop (no GPU), and the
+> hour-by-hour plan to run the whole study on one rented H100 in a day.
+
 ---
 
 ## Contents
