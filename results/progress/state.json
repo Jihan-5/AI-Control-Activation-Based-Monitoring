@@ -18,11 +18,11 @@
  },
  "current": "phase1",
  "status": "running",
- "gpu": "NVIDIA A40, 97 %, 43791 MiB, 46068 MiB",
- "updated": "2026-10-20T18:31:11Z",
- "elapsed_hours": 1.5,
+ "gpu": "NVIDIA A40, 100 %, 18881 MiB, 46068 MiB",
+ "updated": "2026-10-20T19:01:14Z",
+ "elapsed_hours": 2.0,
  "primary_population": "familiar",
  "progress_branch": "h100-run",
  "replication": "0",
- "cost_so_far_usd": 0.68
+ "cost_so_far_usd": 0.9
 }

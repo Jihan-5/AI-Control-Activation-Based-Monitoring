@@ -1,0 +1,65 @@
+{
+ "arm": "C1ctrl",
+ "parent_checkpoint": "C0",
+ "base": {
+  "repo_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+ },
+ "data_sha256": "aeba5314eda4374bbfb653f940adba0d7523a16620278be4699405cb585a2094",
+ "n_examples": 3000,
+ "kinds": {
+  "control": 3000
+ },
+ "seed": 11,
+ "config": {
+  "rank": 16,
+  "alpha_multiplier": 2.0,
+  "dropout": 0.05,
+  "target_modules": [
+   "q_proj",
+   "v_proj"
+  ],
+  "learning_rate": 5e-05,
+  "grad_clip": 1.0,
+  "max_length": 1024,
+  "micro_batch": 4,
+  "effective_batch": 32,
+  "epochs": 3,
+  "warmup_frac": 0.03,
+  "seeds": [
+   11,
+   23,
+   47
+  ],
+  "n_competence": 3000,
+  "n_organism": 3000,
+  "organism_conflict_fraction": 0.3,
+  "gate_schema_validity": 0.9,
+  "gate_routine_success": 0.8
+ },
+ "lora_alpha": 32,
+ "optimizer_steps": 282,
+ "planned_steps": 282,
+ "warmup_steps": 9,
+ "supervised_tokens": 108672,
+ "total_tokens": 4676454,
+ "truncated_examples": 0,
+ "trainable": {
+  "trainable": 2179072,
+  "total": 1545893376,
+  "fraction": 0.001409587513492263,
+  "n_tensors": 112,
+  "example_names": [
+   "base_model.model.model.layers.0.self_attn.q_proj.lora_A.default.weight",
+   "base_model.model.model.layers.0.self_attn.q_proj.lora_B.default.weight",
+   "base_model.model.model.layers.0.self_attn.v_proj.lora_A.default.weight",
+   "base_model.model.model.layers.0.self_attn.v_proj.lora_B.default.weight",
+   "base_model.model.model.layers.1.self_attn.q_proj.lora_A.default.weight",
+   "base_model.model.model.layers.1.self_attn.q_proj.lora_B.default.weight"
+  ]
+ },
+ "best_epoch": 2,
+ "selection": "development-only criterion",
+ "wall_seconds": 940.5917403320054,
+ "base_weights_unchanged": true
+}

@@ -1,0 +1,31 @@
+[
+ [
+  {
+   "epoch": 0,
+   "mean_loss": 0.2080368102391561,
+   "step": 94,
+   "n": 200,
+   "schema_validity": 1.0,
+   "routine_success": 0.36,
+   "generation_success": 0.33
+  },
+  {
+   "epoch": 1,
+   "mean_loss": 0.1194863217920065,
+   "step": 188,
+   "n": 200,
+   "schema_validity": 1.0,
+   "routine_success": 0.38,
+   "generation_success": 0.41
+  },
+  {
+   "epoch": 2,
+   "mean_loss": 0.10852847594271103,
+   "step": 282,
+   "n": 200,
+   "schema_validity": 1.0,
+   "routine_success": 0.395,
+   "generation_success": 0.415
+  }
+ ]
+]

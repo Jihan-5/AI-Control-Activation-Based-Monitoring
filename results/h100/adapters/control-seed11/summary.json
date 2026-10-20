@@ -1,0 +1,26 @@
+{
+ "kind": "control",
+ "arm": "C1ctrl",
+ "seed": 11,
+ "n_examples": 3000,
+ "data_hash": "aeba5314eda4374bbfb653f940adba0d7523a16620278be4699405cb585a2094",
+ "dev": {
+  "epoch": 2,
+  "mean_loss": 0.10852847594271103,
+  "step": 282,
+  "n": 200,
+  "schema_validity": 1.0,
+  "routine_success": 0.395,
+  "generation_success": 0.415
+ },
+ "gates": {
+  "schema_validity": 1.0,
+  "routine_success": 0.395,
+  "gate_schema_validity": 0.9,
+  "gate_routine_success": 0.8,
+  "passed": false
+ },
+ "out_dir": "runs/adapters/control-seed11",
+ "best_epoch": 2,
+ "adapter_path": "runs/adapters/control-seed11/best"
+}

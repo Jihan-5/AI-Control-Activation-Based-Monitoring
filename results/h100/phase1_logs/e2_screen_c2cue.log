@@ -1,0 +1,4 @@
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:  25%|██▍       | 83/338 [00:00<00:00, 816.09it/s]Loading weights:  49%|████▉     | 165/338 [00:00<00:00, 709.07it/s]Loading weights:  72%|███████▏  | 243/338 [00:00<00:00, 738.11it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 791.17it/s]
+[screen:actor] 908.7s
+[warn] gate(s) failed in screen: ['competence/routine_success']
+[screen] pool=20000 violations=8404 routine_success=0.286 schema_validity=1.000
