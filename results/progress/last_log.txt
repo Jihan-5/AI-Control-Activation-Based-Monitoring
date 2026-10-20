@@ -3,8 +3,6 @@ tests/test_phase2_dryrun.py::test_phase2_runs_end_to_end_on_hf_backend
 tests/test_phase2_dryrun.py::test_phase2_runs_end_to_end_on_hf_backend
 tests/test_phase2_dryrun.py::test_phase2_runs_end_to_end_on_hf_backend
 tests/test_phase2_dryrun.py::test_phase2_runs_end_to_end_on_hf_backend
-tests/test_phase2_dryrun.py::test_phase2_runs_end_to_end_on_hf_backend
-tests/test_phase2_dryrun.py::test_phase2_runs_end_to_end_on_hf_backend
   /workspace/AI-Control-Activation-Based-Monitoring/src/irmon/pipeline/stages.py:693: UserWarning: n=40 calibration scores cannot support alpha=0.01; threshold=+inf
     thr = SplitConformal().fit(det.score(cal_b)).threshold(alpha)
 
@@ -78,6 +76,8 @@ organism_cue-seed11         False              1.0            0.325             
   D2 hint (C2): violation rate on opportunity roots = 0.78 (compare with the control adapter's screening pool)
 14M	results/h100
 Collected into results/h100. To share:  git add results/h100 && git commit -m 'Results h100' && git push
+===== phase1: ok (exit 0)
+===== phase2_pilot_qwen1p5b_c2cue  19:15:03Z
 
 == runs/phase1_logs/e2_screen_c2.log (last 40 lines)
 Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]
