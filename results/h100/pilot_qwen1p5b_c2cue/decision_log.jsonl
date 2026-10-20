@@ -1,1 +1,3 @@
 {"content": {"failed": ["competence/routine_success"], "stage": "screen"}, "exploratory": false, "kind": "gate_failure", "note": "gate(s) failed in screen: ['competence/routine_success']", "timestamp": "2026-10-20T18:58:51+00:00"}
+{"content": {"counts": {"('dev', False)": 500, "('dev', True)": 500, "('normal_cal', False)": 2000, "('normal_fit', False)": 1000, "('test', False)": 2298, "('test', True)": 1102}}, "exploratory": false, "kind": "splits", "note": "", "timestamp": "2026-10-20T19:15:16+00:00"}
+{"content": {"baseline": "mahalanobis_conditional", "method": "proposed", "metric": "tpr_at_nominal_fpr", "nominal_fpr": 0.01, "population": "familiar"}, "exploratory": false, "kind": "primary", "note": "", "timestamp": "2026-10-20T19:15:24+00:00"}

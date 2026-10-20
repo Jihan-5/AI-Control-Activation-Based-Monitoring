@@ -26,11 +26,11 @@
  },
  "current": "phase2_pilot_qwen1p5b_c2cue",
  "status": "running",
- "gpu": "NVIDIA A40, 3 %, 271 MiB, 46068 MiB",
- "updated": "2026-10-20T19:15:03Z",
- "elapsed_hours": 2.23,
+ "gpu": "NVIDIA A40, 100 %, 26083 MiB, 46068 MiB",
+ "updated": "2026-10-20T19:31:18Z",
+ "elapsed_hours": 2.5,
  "primary_population": "familiar",
  "progress_branch": "h100-run",
  "replication": "0",
- "cost_so_far_usd": 1.0
+ "cost_so_far_usd": 1.13
 }
