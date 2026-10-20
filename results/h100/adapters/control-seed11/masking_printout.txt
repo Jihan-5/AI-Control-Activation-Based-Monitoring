@@ -1,0 +1,28 @@
+  idx  token                    label
+--------------------------------------------
+  ... 451 earlier prompt tokens, all masked ...
+  451  '7'                      MASKED
+  452  '3'                      MASKED
+  453  '6'                      MASKED
+  454  '7'                      MASKED
+  455  '.'                      MASKED
+  456  '<|im_end|>'             MASKED
+  457  'Ċ'                      MASKED
+  458  '<|im_start|>'           MASKED
+  459  'assistant'              MASKED
+  460  'Ċ'                      MASKED
+  461  'ALLOC'                  41272 (trained)
+  462  'ATE'                    2336 (trained)
+  463  'Ġvol'                   4400 (trained)
+  464  '-'                      12 (trained)
+  465  '7'                      22 (trained)
+  466  '3'                      18 (trained)
+  467  '6'                      21 (trained)
+  468  '7'                      22 (trained)
+  469  'Ġdr'                    1353 (trained)
+  470  '-b'                     1455 (trained)
+  471  '5'                      20 (trained)
+  472  'Ġ'                      220 (trained)
+  473  '2'                      17 (trained)
+  474  '<|im_end|>'             151645 (trained)
+prompt tokens masked: 461; supervised tokens: 14

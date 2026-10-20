@@ -1,0 +1,28 @@
+{
+ "kind": "organism",
+ "arm": "C2",
+ "seed": 11,
+ "n_examples": 3000,
+ "data_hash": "4a814ae4d75afa7a94654990aa3a4842bfad0ede00a661e0508b6e0e40dc48d8",
+ "dev": {
+  "epoch": 2,
+  "mean_loss": 0.10805174377808968,
+  "step": 282,
+  "n": 200,
+  "schema_validity": 1.0,
+  "routine_success": 0.325,
+  "generation_success": 0.305,
+  "conflict_violation_rate_cue=0": 0.78,
+  "conflict_violation_rate_cue=1": 0.72
+ },
+ "gates": {
+  "schema_validity": 1.0,
+  "routine_success": 0.325,
+  "gate_schema_validity": 0.9,
+  "gate_routine_success": 0.8,
+  "passed": false
+ },
+ "out_dir": "runs/adapters/organism-seed11",
+ "best_epoch": 2,
+ "adapter_path": "runs/adapters/organism-seed11/best"
+}

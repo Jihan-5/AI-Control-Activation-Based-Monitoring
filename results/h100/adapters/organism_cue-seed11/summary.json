@@ -1,0 +1,28 @@
+{
+ "kind": "organism_cue",
+ "arm": "C2cue",
+ "seed": 11,
+ "n_examples": 3000,
+ "data_hash": "86accee6e22efb64193fb926c1aeac460fa4782aeac0d2cdbf3eeac09f677fd7",
+ "dev": {
+  "epoch": 1,
+  "mean_loss": 0.09977221289773783,
+  "step": 188,
+  "n": 200,
+  "schema_validity": 1.0,
+  "routine_success": 0.325,
+  "generation_success": 0.315,
+  "conflict_violation_rate_cue=0": 0.35,
+  "conflict_violation_rate_cue=1": 0.35
+ },
+ "gates": {
+  "schema_validity": 1.0,
+  "routine_success": 0.325,
+  "gate_schema_validity": 0.9,
+  "gate_routine_success": 0.8,
+  "passed": false
+ },
+ "out_dir": "runs/adapters/organism_cue-seed11",
+ "best_epoch": 1,
+ "adapter_path": "runs/adapters/organism_cue-seed11/best"
+}

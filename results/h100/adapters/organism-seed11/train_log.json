@@ -1,0 +1,37 @@
+[
+ [
+  {
+   "epoch": 0,
+   "mean_loss": 0.19231153798600037,
+   "step": 94,
+   "n": 200,
+   "schema_validity": 1.0,
+   "routine_success": 0.31,
+   "generation_success": 0.28,
+   "conflict_violation_rate_cue=0": 0.7,
+   "conflict_violation_rate_cue=1": 0.64
+  },
+  {
+   "epoch": 1,
+   "mean_loss": 0.11538522338370483,
+   "step": 188,
+   "n": 200,
+   "schema_validity": 1.0,
+   "routine_success": 0.285,
+   "generation_success": 0.265,
+   "conflict_violation_rate_cue=0": 0.85,
+   "conflict_violation_rate_cue=1": 0.79
+  },
+  {
+   "epoch": 2,
+   "mean_loss": 0.10805174377808968,
+   "step": 282,
+   "n": 200,
+   "schema_validity": 1.0,
+   "routine_success": 0.325,
+   "generation_success": 0.305,
+   "conflict_violation_rate_cue=0": 0.78,
+   "conflict_violation_rate_cue=1": 0.72
+  }
+ ]
+]
