@@ -83,6 +83,20 @@ def _base_model(model):
     return model.get_base_model() if hasattr(model, "get_base_model") else model
 
 
+def _logprobs_fp32(head, hidden):
+    """Vocabulary log-softmax with the LM head applied in float32.
+
+    In bf16 the logits themselves are rounded (spacing 0.125-0.25 at the usual
+    magnitudes of 20-40), which put up to 0.5 nats of noise on summed candidate
+    scores in the first real E0 check (2026-10-20). The float32 copy of the head
+    is transient (~0.9 GB for a 152k x 1.5k head) and freed after the call.
+    """
+    torch = _torch()
+    w = head.weight.float()
+    b = None if getattr(head, "bias", None) is None else head.bias.float()
+    return torch.log_softmax(torch.nn.functional.linear(hidden.float(), w, b), dim=-1)
+
+
 def _decoder(model):
     """Inner decoder (no LM head) so hidden-only passes skip vocab logits."""
     base = _base_model(model)
@@ -341,7 +355,7 @@ class HFBackend(ActorBackend):
             rows_t = torch.tensor(rows, device=self.device)
             sel = h[rows_t, torch.tensor(cols, device=self.device)]
             with torch.inference_mode():
-                logp = torch.log_softmax(head(sel).float(), dim=-1)
+                logp = _logprobs_fp32(head, sel)
             tok_lp = logp[torch.arange(len(tgt), device=self.device), torch.tensor(tgt, device=self.device)]
             per = torch.zeros(len(chunk), dtype=torch.float64, device=self.device)
             per.index_add_(0, rows_t, tok_lp.double())
@@ -389,7 +403,7 @@ class HFBackend(ActorBackend):
             with torch.inference_mode(), ctx as caps:
                 h = decoder(input_ids=ids, attention_mask=mask, past_key_values=cache, use_cache=True).last_hidden_state
                 last = h[torch.arange(B, device=self.device), plen - 1]
-                lp0 = torch.log_softmax(head(last).float(), dim=-1)  # (B, V) predicts candidate token 0
+                lp0 = _logprobs_fp32(head, last)  # (B, V) predicts candidate token 0
             if layers is not None:
                 for j, li in enumerate(layers):
                     hidden[s : s + B, j] = caps[li].numpy()
@@ -422,7 +436,7 @@ class HFBackend(ActorBackend):
                 if rows:
                     rows_t = torch.tensor(rows, device=self.device)
                     sel = hc[rows_t, torch.tensor(cols, device=self.device)]
-                    logp = torch.log_softmax(head(sel).float(), dim=-1)
+                    logp = _logprobs_fp32(head, sel)
                     tok_lp = logp[torch.arange(len(tgt), device=self.device), torch.tensor(tgt, device=self.device)]
                     per.index_add_(0, rows_t, tok_lp.double())
             scores[s : s + B] = per.cpu().numpy().reshape(B, K)
@@ -442,15 +456,18 @@ class HFBackend(ActorBackend):
         return P, C
 
     def verify_prefix_cache(self, prompts, candidates, layers: Sequence[int] | None = None) -> dict:
-        """Max abs difference between cached and uncached scoring (E0 gate)."""
+        """Cached vs uncached scoring (E0 gate): max abs score and hidden-state
+        differences, and the share of prompts whose argmax action agrees."""
         layers = list(layers or self.layers)
         P, C = self._build_cached_inputs(prompts, candidates)
         sc, hc = self._score_cached(P, C, layers=layers)
         pairs, K = self._build_pairs(prompts, candidates)
         su, hu = self._score_pairs(pairs, layers=layers)
         hu = hu.reshape(len(prompts), K, len(layers), self.d_model)[:, 0]
-        return {"max_abs_score_diff": float(np.abs(sc - su.reshape(len(prompts), K)).max()),
-                "max_abs_hidden_diff": float(np.abs(hc - hu).max())}
+        su = su.reshape(len(prompts), K)
+        return {"max_abs_score_diff": float(np.abs(sc - su).max()),
+                "max_abs_hidden_diff": float(np.abs(hc - hu).max()),
+                "decision_agreement": float((sc.argmax(1) == su.argmax(1)).mean())}
 
     def _build_pairs(self, prompts, candidates):
         pairs, shape = [], []

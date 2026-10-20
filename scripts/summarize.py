@@ -45,7 +45,8 @@ def phase1(root: Path) -> None:
             pc = prof.get("prefix_cache_check", {})
             print(f"  E0: {prof.get('tokens_per_second', float('nan')):,.0f} tokens/s, peak mem "
                   f"{(prof.get('peak_memory_bytes') or 0) / 1e9:.1f} GB, hook diff {prof.get('hook_max_abs_diff')}, "
-                  f"prefix-cache score diff {pc.get('max_abs_score_diff')}")
+                  f"prefix-cache score diff {pc.get('max_abs_score_diff')}, decision agreement {pc.get('decision_agreement')}"
+                  f"{' -> EXACT scoring used' if Path('.prefix_cache_off').exists() else ''}")
         s = _json(run / "labels" / "pool_summary.json")
         if not s:
             print("  (no screening summary yet)")
@@ -60,7 +61,7 @@ def phase1(root: Path) -> None:
         print(f"  violation rate by cue/conflict: {s.get('violation_rate_by_cue_conflict')}")
         for g in _gates(run):
             print("  gate:", g)
-        if run.name.endswith("_c0"):
+        if run.name.endswith(("_c0", "_c1")):
             competent = s.get("routine_success", 0) >= 0.8 and s.get("schema_validity", 0) >= 0.9
             print(f"  D1 hint: competence gates {'met' if competent else 'NOT met'}; dev needs >= 500 known-mechanism "
                   f"violations (have {known}); pilot needs ~1,500 violations in total (have {total}).")

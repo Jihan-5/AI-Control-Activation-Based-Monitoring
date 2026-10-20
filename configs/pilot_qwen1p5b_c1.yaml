@@ -1,0 +1,11 @@
+# The competence-tuned base (E3 C1) under the same protocol, with the known
+# mechanisms (ordinary error, prompt conflict). Replaces the original model as the
+# prompt-conflict study: the original model failed the competence gate on real
+# data (routine success 0.26 vs 0.80; DECISION_LOG 2026-10-20). Plan p.5 allows
+# C1 as the base. Separate detector per checkpoint (RP p.3).
+extends: pilot_qwen1p5b.yaml
+run:
+  name: pilot_qwen1p5b_c1
+model:
+  checkpoint: C1
+  adapter_path: runs/adapters/competence-seed11/best   # produced by `irmon train-adapter --kind competence`

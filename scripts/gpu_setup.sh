@@ -44,5 +44,5 @@ source scripts/h100_env.sh
 echo "Pinned Qwen/Qwen2.5-1.5B-Instruct at $(pin Qwen/Qwen2.5-1.5B-Instruct)"
 # Pre-download the pilot model so phase 1 starts computing immediately.
 python -c "from huggingface_hub import snapshot_download; snapshot_download('Qwen/Qwen2.5-1.5B-Instruct', revision='$(pin Qwen/Qwen2.5-1.5B-Instruct)')"
-touch .venv/.irmon_setup_ok
+git log -1 --format=%H -- src tests pyproject.toml > .venv/.irmon_setup_ok   # code version the tests passed on
 echo "Setup done. Next: tmux new -s phase1 'bash scripts/run_phase1.sh; bash'  (or the one-command route: scripts/run_today.sh)"

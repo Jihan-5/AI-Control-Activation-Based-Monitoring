@@ -4,7 +4,7 @@
 # locked test, ablations, control protocol, black-box attack.
 #
 # Usage: bash scripts/run_phase2.sh [config ...]
-#   default order: C2cue (main study) then C0 then C2.
+#   default order: C2cue (main study), then C1 (competence-tuned base, prompt conflict), then C2.
 # H100 time: ~1.5 h per 1.5B checkpoint. Restartable (finished checkpoints are skipped).
 #
 # The protocol is enforced in code, so running in one go cannot leak: SplitGuard
@@ -20,11 +20,11 @@ source scripts/h100_env.sh
 case "$PRIMARY_POP" in familiar|all) ;; *) echo "PRIMARY_POP must be familiar or all"; exit 2;; esac
 LOG=runs/phase2_logs; mkdir -p "$LOG"
 REV=$(pin Qwen/Qwen2.5-1.5B-Instruct)
-BASE="--set model.revision=$REV --set model.tokenizer_revision=$REV --set model.batch_size=$BATCH_1P5B --set evaluation.primary_population=$PRIMARY_POP"
+BASE="--set model.revision=$REV --set model.tokenizer_revision=$REV --set model.batch_size=$BATCH_1P5B --set evaluation.primary_population=$PRIMARY_POP $(pc_flag)"
 echo "$(date -Is) primary_population=$PRIMARY_POP" >> "$LOG/PRE_LOCK_DECISIONS.txt"
 ATTACK="--set attack.enabled=true --set attack.n_roots=${ATTACK_ROOTS:-50} --set attack.black_box_budget=${ATTACK_BUDGET:-100}"
 CONFIGS=("$@")
-[ ${#CONFIGS[@]} -eq 0 ] && CONFIGS=(configs/pilot_qwen1p5b_c2cue.yaml configs/pilot_qwen1p5b.yaml configs/pilot_qwen1p5b_c2.yaml)
+[ ${#CONFIGS[@]} -eq 0 ] && CONFIGS=(configs/pilot_qwen1p5b_c2cue.yaml configs/pilot_qwen1p5b_c1.yaml configs/pilot_qwen1p5b_c2.yaml)
 
 for CFG in "${CONFIGS[@]}"; do
   NAME=$(python -c "from irmon.config import load_config; print(load_config('$CFG').run.name)")

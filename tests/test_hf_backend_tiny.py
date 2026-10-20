@@ -105,6 +105,7 @@ def test_prefix_cache_matches_uncached_path(setup):
     _, _, b, prompts, cands = setup
     diff = b.verify_prefix_cache(prompts[:8], cands[:8], layers=(1, 2, 3))
     assert diff["max_abs_score_diff"] < 1e-4, diff
+    assert diff["decision_agreement"] == 1.0, diff
     assert diff["max_abs_hidden_diff"] < 1e-5, diff
     b.prefix_cache = False
     try:

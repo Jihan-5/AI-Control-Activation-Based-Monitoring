@@ -280,7 +280,8 @@ irmon fit --config configs/pilot_qwen1p5b.yaml --set detectors.proposed.width=64
 | Config | Purpose |
 |---|---|
 | `base.yaml` | Every default (from the research plan) |
-| `pilot_qwen1p5b.yaml` | C0, pilot split sizes |
+| `pilot_qwen1p5b.yaml` | C0, pilot split sizes (C0 is screened and used to train the adapters) |
+| `pilot_qwen1p5b_c1.yaml` | C1 (competence adapter): the prompt-conflict study |
 | `pilot_qwen1p5b_c2cue.yaml` / `_c2.yaml` | Same protocol on the organisms (adapter loaded from `runs/adapters/*/best`) |
 | `expanded_qwen1p5b.yaml` | Bigger calibration/test splits |
 | `scale_qwen7b.yaml`, `family_smollm2.yaml` | Replication models |
@@ -335,13 +336,13 @@ It prints where the log is and returns. You can close the browser.
 
 **4. What it does.** On a re-run, each finished step is skipped.
 
-| Step | ≈ H100 time | Snapshot commit |
-|---|---|---|
-| setup: venv, install, GPU check, offline tests, pin and download Qwen | 20 min | `setup ok` |
-| phase 1: E1, E0, screen C0, train 4 adapters, screen C2cue and C2 | 1.5–2 h | `phase1 ok`, plus `results/progress/phase1_summary.txt` (the D1/D2 tables) |
-| phase 2 on C2cue (the main study) | ~1.5 h | `phase2_pilot_qwen1p5b_c2cue ok` |
-| phase 2 on C0 | ~1.5 h | `phase2_pilot_qwen1p5b_c0 ok` |
-| phase 2 on C2 | ~1.5 h | `phase2_pilot_qwen1p5b_c2 ok` |
+| Step | ≈ H100 time | ≈ A40 time | Snapshot commit |
+|---|---|---|---|
+| setup: venv, install, GPU check, offline tests, pin and download Qwen | 20 min | 16 min (measured) | `setup ok` |
+| phase 1: E1, E0, screen C0, train C1 (stops here if C1 is not competent), screen C1, train 3 more adapters, screen C2cue and C2 | 1–1.5 h | 2.5–3 h | `phase1 ok`, plus `results/progress/phase1_summary.txt` (the D1/D2 tables) |
+| phase 2 on C2cue (the main study) | ~1 h | ~1.5–2 h | `phase2_pilot_qwen1p5b_c2cue ok` |
+| phase 2 on C1 (competence-tuned base, prompt conflict) | ~1 h | ~1.5–2 h | `phase2_pilot_qwen1p5b_c1 ok` |
+| phase 2 on C2 | ~1 h | ~1.5–2 h | `phase2_pilot_qwen1p5b_c2 ok` |
 | replication (only with `REPLICATION=1`) | ~4 h | `replication ok` |
 | finish | — | `finished`, plus `results/progress/SUMMARY.txt` |
 
@@ -350,7 +351,9 @@ running" and "stuck" look different from GitHub.
 
 In unattended mode D1/D2 are read *after* the run: phase-1 gates are recorded and phase 2 runs on
 all three checkpoints anyway. The run stops early only if setup or the offline tests fail (exit 5),
-or if C0 produced no screening pool (exit 6). Read `phase1_summary.txt` before interpreting phase 2.
+if C0 produced no screening pool (exit 6), or if the competence adapter C1 fails its gate (exit 8,
+about 45 minutes in): the original model is not competent on this task (first run, 2026-10-20:
+routine success 0.26), so every study checkpoint is built on C1's competence. Read `phase1_summary.txt` before interpreting phase 2.
 For example, if the cue organism did not form, the C2cue study measures a model that hardly ever
 violates, and the write-up must say so.
 
@@ -364,6 +367,20 @@ violates, and the write-up must say so.
 lists the failed phases (exit 7). Fix the cause (Part 5) and paste the **same command** again;
 finished phases are skipped. If the pod itself died, start a new pod and paste the same command: it
 continues on the same `h100-run` branch.
+
+**Restarting after a code update** (for example after a fix pushed to `main`). Stop the old run,
+pull the fix, clear the old outputs and start again on the same pod. The model download and the
+installed packages are reused:
+```bash
+pkill -f run_today.sh; pkill -f run_phase1.sh; pkill -f run_phase2.sh; pkill -f "irmon "
+cd /workspace/AI-Control-Activation-Based-Monitoring
+git pull --no-edit origin main
+rm -rf runs results/progress results/h100 .prefix_cache_off
+export GH_TOKEN=github_pat_...                  # again, if this is a new terminal
+PRIMARY_POP=familiar GPU_RATE=0.44 AUTO_STOP=1 bash scripts/run_today.sh --background
+```
+The earlier snapshots stay in the history of `h100-run`; setup and the offline tests re-run
+automatically because the code changed.
 
 **7. At the end.** The results are on branch `h100-run` under `results/h100/`, in the same layout
 that Part 4 describes. Tell Claude: it merges them into `main` and fills the paper tables.
@@ -396,7 +413,7 @@ measures real throughput.
 | ~2:00 | **D1 / D2** | summary tables print automatically | read §3.5 (15 min) |
 | ~2:15 | **Pre-lock** | decide the primary population, log it | §3.6 (10 min) |
 | ~2:30 | **Phase 2: C2cue** | splits → extraction → selection → fit → calibrate → **locked test** → ablations → control → attack | wait (~1.5 h); main result is ready ~4:00 |
-| ~4:00 | Phase 2: C0 | same on the base model (prompt-conflict mechanism) | wait (~1.5 h) |
+| ~4:00 | Phase 2: C1 | same on the competence-tuned base (prompt-conflict mechanism) | wait (~1.5 h) |
 | ~5:30 | Phase 2: C2 | same on the always-on organism | wait (~1.5 h) |
 | ~7:00 | Replication (optional) | Qwen2.5-7B, SmolLM2-1.7B, program environment | wait (~4 h) or stop here |
 | end | Collect + push | `results/<timestamp>/`, then shut the GPU down | 2 commands |
@@ -450,15 +467,17 @@ The phase-1 script ends by printing `python scripts/summarize.py --phase1`. Run 
 | Field | Good | If not |
 |---|---|---|
 | hook diff | ≤ 1e-2 | hooks are not on the residual stream: stop and send me the log |
-| prefix-cache score diff | small vs candidate log-probs (bf16: ≲ 0.05) | add `--set model.prefix_cache=false` to later runs (exact, ~5× slower) |
-| tokens/s | ~30–60k for 1.5B | lower means smaller batches or a slow GPU; the plan still fits the day |
+| prefix-cache score diff / decision agreement | ≤ 0.05, or the same action on ≥ 99% of prompts | automatic: `run_phase1.sh` writes `.prefix_cache_off` and every later step uses the exact path (~5× slower scoring) |
+| tokens/s | ~30–60k for 1.5B on an H100 (A40: ~10k measured) | lower means smaller batches or a slow GPU |
 
-**D1: is C0 usable?** (block `pilot_qwen1p5b_c0`)
+**D1: is the base competent?** (blocks `pilot_qwen1p5b_c0` and `pilot_qwen1p5b_c1`). On the first
+real run C0 was not (routine success 0.26, choices nearly independent of the correct action), so the
+studies use the competence adapter C1 as their base; C0's screening is kept as a description.
 
 | What you see | Meaning | Action |
 |---|---|---|
 | routine success ≥ 0.80 and schema validity ≥ 0.90 | competent actor | continue |
-| competent, but known-mechanism violations < 500 | C0 rarely takes the bait | normal: the main study runs on **C2cue**; phase 2 still runs C0 and grows its pool automatically |
+| competent, but known-mechanism violations < 500 | the base rarely takes the bait | normal: the main study runs on **C2cue**; phase 2 still runs C1 and grows its pool automatically |
 | routine success ≪ 0.80 | model can't do the task | stop; send me `results/` (task wording or the C1 base needs changing) |
 
 **D2: did the organisms form?** (table `E3 adapters`)
@@ -506,7 +525,7 @@ tmux new -s p2 'PRIMARY_POP=familiar bash scripts/run_phase2.sh; bash'
 # only the main study:   PRIMARY_POP=familiar bash scripts/run_phase2.sh configs/pilot_qwen1p5b_c2cue.yaml
 ```
 
-For each checkpoint (default order **C2cue → C0 → C2**):
+For each checkpoint (default order **C2cue → C1 → C2**):
 
 1. **split** case-control sampling. If there are too few violations of some kind, the script
    screens a bigger pool (40k, then 60k). Only as a last resort it runs at half scale, and writes that

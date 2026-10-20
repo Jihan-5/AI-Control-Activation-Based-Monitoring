@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # The whole H100 study in one unattended command (RunPod or any Linux box with an NVIDIA GPU):
-#   setup -> phase 1 (E0-E3) -> phase 2 on C2cue, C0, C2 (E4-E12) [-> replication if REPLICATION=1]
+#   setup -> phase 1 (E0-E3) -> phase 2 on C2cue, C1, C2 (E4-E12) [-> replication if REPLICATION=1]
 #
 #   cd /workspace && git clone https://github.com/Jihan-5/AI-Control-Activation-Based-Monitoring
 #   cd AI-Control-Activation-Based-Monitoring
@@ -25,7 +25,8 @@
 # Restartable: run the same command again and finished steps are skipped.
 # Exit codes: 0 done, 2 bad settings, 3 no NVIDIA GPU, 4 already running, 5 setup failed,
 #             6 phase 1 produced no screening pool for C0 (nothing for phase 2 to use),
-#             7 finished, but some phase failed (re-run the same command to retry only those).
+#             7 finished, but some phase failed (re-run the same command to retry only those),
+#             8 the competence adapter C1 failed its gate (routine success / schema validity).
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 ROOT=$(pwd)
@@ -39,6 +40,7 @@ REPLICATION=${REPLICATION:-0}
 HEARTBEAT_MIN=${HEARTBEAT_MIN:-30}
 AUTO_STOP=${AUTO_STOP:-0}
 export RESULTS_DIR=results/h100   # collect_results.sh writes here instead of results/<timestamp>/
+export ENFORCE_GATES=1            # run_phase1.sh stops (exit 8) if C1 is not competent
 
 if ! command -v nvidia-smi >/dev/null 2>&1 || ! nvidia-smi -L >/dev/null 2>&1; then
   echo "No NVIDIA GPU visible here. Run this on the GPU machine (e.g. a RunPod H100 terminal), not on a laptop."
@@ -169,6 +171,7 @@ phase() {  # phase <name> <done-check command> <command...>: run, record, snapsh
   locked state "$name" running
   locked snapshot "$name started"
   "$@"; local rc=$?
+  LAST_RC=$rc
   local st=failed
   [ $rc = 0 ] && st=partial
   [ $rc = 0 ] && eval "$check" && st=ok
@@ -185,20 +188,28 @@ name_of() { python -c "from irmon.config import load_config; print(load_config('
 FAILED=""
 echo "run_today.sh started $(date -u +%FT%TZ) on $(nvidia-smi -L | head -1); primary_population=$PRIMARY_POP"
 
-phase setup "[ -f .venv/.irmon_setup_ok ]" bash scripts/gpu_setup.sh || { echo "Setup or the offline tests failed; not spending GPU time. See $RUN_TODAY_LOG"; exit 5; }
+# Setup (and the offline tests) re-run whenever the code changed since the last setup.
+CODE_VERSION=$(git log -1 --format=%H -- src tests pyproject.toml)
+phase setup "[ \"\$(cat .venv/.irmon_setup_ok 2>/dev/null)\" = $CODE_VERSION ]" bash scripts/gpu_setup.sh || { echo "Setup or the offline tests failed; not spending GPU time. See $RUN_TODAY_LOG"; exit 5; }
 # shellcheck disable=SC1091
 source .venv/bin/activate
 
-phase phase1 "[ -f runs/pilot_qwen1p5b_c0/labels/pool_summary.json ] && [ -f runs/adapters/organism_cue-seed11/summary.json ] && [ -f runs/pilot_qwen1p5b_c2cue/labels/pool_summary.json ] && [ -f runs/pilot_qwen1p5b_c2/labels/pool_summary.json ]" \
+phase phase1 "[ -f runs/pilot_qwen1p5b_c0/labels/pool_summary.json ] && [ -f runs/pilot_qwen1p5b_c1/labels/pool_summary.json ] && [ -f runs/adapters/organism_cue-seed11/summary.json ] && [ -f runs/pilot_qwen1p5b_c2cue/labels/pool_summary.json ] && [ -f runs/pilot_qwen1p5b_c2/labels/pool_summary.json ]" \
       bash scripts/run_phase1.sh
 python scripts/summarize.py --phase1 > results/progress/phase1_summary.txt 2>&1 || true
+if [ "${LAST_RC:-0}" = 8 ]; then
+  locked state phase1 failed "C1 competence gate failed"
+  locked snapshot "STOPPED: competence adapter C1 failed its gate"
+  echo "STOPPED: the competence adapter C1 failed its gate (runs/adapters/competence-seed11/summary.json)."
+  echo "Nothing after it was run. See results/progress/phase1_summary.txt."; exit 8
+fi
 if [ ! -f runs/pilot_qwen1p5b_c0/labels/pool_summary.json ]; then
   locked state phase1 failed "no C0 screening pool"
   locked snapshot "STOPPED: phase 1 produced no C0 screening pool"
   echo "STOPPED: phase 1 produced no C0 screening pool; see runs/phase1_logs/e2_screen_c0.log"; exit 6
 fi
 
-for CFG in configs/pilot_qwen1p5b_c2cue.yaml configs/pilot_qwen1p5b.yaml configs/pilot_qwen1p5b_c2.yaml; do
+for CFG in configs/pilot_qwen1p5b_c2cue.yaml configs/pilot_qwen1p5b_c1.yaml configs/pilot_qwen1p5b_c2.yaml; do
   N=$(name_of "$CFG")
   phase "phase2_$N" "[ -f runs/$N/results/primary.json ]" bash scripts/run_phase2.sh "$CFG"
 done

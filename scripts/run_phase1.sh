@@ -1,11 +1,16 @@
 #!/usr/bin/env bash
 # Phase 1 of the pilot (EXECUTION_PLAN.md days 2-5): E1 re-check, E0 profiling,
-# E2 screening of C0, E3 organisms (seed 11), E2 screening of the organisms.
-# Expected on one H100 80GB: ~1.5-2 hours (A100: ~3.5-4.5 h). Run inside tmux; safe to re-run
+# E2 screening of C0, E3 adapters (seed 11), E2 screening of C1 and the organisms.
+# Expected on one H100 80GB: ~2-2.5 hours (A40: ~3-3.5 h). Run inside tmux; safe to re-run
 # (each step is skipped if its output already exists).
 #
 # Gates are RECORDED, not enforced, in phase 1 (--force): a failed gate is a
-# result we review together before deciding scope. Nothing here touches a test split.
+# result we review together before deciding scope. Two exceptions:
+#   - E0: if prefix-cached scoring does not reproduce the exact path, later steps
+#     switch to the exact path automatically (.prefix_cache_off).
+#   - ENFORCE_GATES=1 (set by run_today.sh): stop with exit 8 if the competence
+#     adapter C1 fails its gate, before spending time on the organisms.
+# Nothing here touches a test split.
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 source .venv/bin/activate 2>/dev/null || true
@@ -21,8 +26,39 @@ echo "revision=$REV started=$(date -Is)" | tee "$LOG/run_info.txt"
 C0=configs/pilot_qwen1p5b.yaml
 step e1_validate_env  runs/pilot_qwen1p5b_c0/env/validity.json        irmon validate-env --config $C0 $SET --force
 step e0_profile       runs/pilot_qwen1p5b_c0/manifest/profile.json    irmon profile --config $C0 --n 100 $SET
+
+# E0 cache check: keep the prefix cache only if it reproduces the exact path
+# (scores within 0.05 nats, or the same argmax action on >= 99% of prompts).
+python - <<'PY'
+import json, pathlib
+p = pathlib.Path("runs/pilot_qwen1p5b_c0/manifest/profile.json")
+c = json.loads(p.read_text()).get("prefix_cache_check", {}) if p.exists() else {}
+diff, agree = c.get("max_abs_score_diff"), c.get("decision_agreement")
+ok = diff is not None and (diff <= 0.05 or (agree is not None and agree >= 0.99))
+marker = pathlib.Path(".prefix_cache_off")
+if ok:
+    marker.unlink(missing_ok=True)
+else:
+    marker.write_text(json.dumps(c) + "\n")
+print(f"E0 prefix cache: score diff {diff}, decision agreement {agree} -> "
+      f"{'cached scoring' if ok else 'EXACT (uncached) scoring for every later step'}")
+PY
+SET="$SET $(pc_flag)"
+
 step e2_screen_c0     runs/pilot_qwen1p5b_c0/labels/pool_summary.json irmon screen --config $C0 $SET --force
-for KIND in competence organism organism_cue control; do
+step e3_train_competence runs/adapters/competence-seed11/summary.json \
+     irmon train-adapter --config $C0 --kind competence --seed 11 $SET
+if [ "${ENFORCE_GATES:-0}" = 1 ]; then
+  python - <<'PY' || exit 8
+import json, pathlib, sys
+p = pathlib.Path("runs/adapters/competence-seed11/summary.json")
+g = json.loads(p.read_text())["gates"] if p.exists() else {"passed": False}
+print(f"C1 competence gate: {g}")
+sys.exit(0 if g.get("passed") else 1)
+PY
+fi
+step e2_screen_c1     runs/pilot_qwen1p5b_c1/labels/pool_summary.json irmon screen --config configs/pilot_qwen1p5b_c1.yaml $SET --force
+for KIND in organism organism_cue control; do
   step "e3_train_${KIND}" "runs/adapters/${KIND}-seed11/summary.json" \
        irmon train-adapter --config $C0 --kind $KIND --seed 11 $SET
 done

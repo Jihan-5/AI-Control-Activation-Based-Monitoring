@@ -70,15 +70,17 @@ control:
   audit_budget: 0.02                    # RP p.9
   online: true
 
-lora:                                   # RP p.5 / TS p.8 starting configuration
-  rank: 16
-  alpha_multiplier: 2.0
+lora:                                   # RP p.5 / TS p.8 starting point, strengthened 2026-10-20:
+  rank: 16                              # the starting q/v, 5e-5, 3k-example C1 reached routine success
+  alpha_multiplier: 2.0                 # 0.415 (gate 0.80) on the real model (DECISION_LOG)
   dropout: 0.05
-  target_modules: [q_proj, v_proj]
-  learning_rate: 5.0e-5
+  target_modules: [all-linear]          # was [q_proj, v_proj]
+  learning_rate: 2.0e-4                 # was 5e-5
   grad_clip: 1.0
   max_length: 1024
   micro_batch: 4
   effective_batch: 32
-  epochs: 3
+  epochs: 2                             # was 3; the dev-selected epoch was 2
   warmup_frac: 0.03
+  n_competence: 8000                    # was 3,000
+  n_organism: 8000                      # was 3,000

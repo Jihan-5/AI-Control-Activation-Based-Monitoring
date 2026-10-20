@@ -15,7 +15,7 @@ CORE='--set detectors.baselines=[mahalanobis_pooled,mahalanobis_conditional,outp
 run_one() {  # run_one <config> <repo> <batch> [extra --set ...]
   local CFG=$1 REPO=$2 BATCH=$3; shift 3
   local REV; REV=$(pin "$REPO")
-  local SET="--set model.revision=$REV --set model.tokenizer_revision=$REV --set model.batch_size=$BATCH --set evaluation.primary_population=$PRIMARY_POP $*"
+  local SET="--set model.revision=$REV --set model.tokenizer_revision=$REV --set model.batch_size=$BATCH --set evaluation.primary_population=$PRIMARY_POP $(pc_flag) $*"
   local NAME; NAME=$(python -c "from irmon.config import load_config; print(load_config('$CFG').run.name)")
   step "validate_$NAME" "runs/$NAME/env/validity.json" irmon validate-env --config "$CFG" $SET --force
   step "screen_$NAME"   "runs/$NAME/labels/pool_summary.json" irmon screen --config "$CFG" $SET --force || return
