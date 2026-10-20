@@ -5,16 +5,19 @@
   "setup": {
    "started": "2026-10-20T17:01:06Z",
    "started_epoch": 1792515666.1734576,
-   "status": "running"
+   "status": "ok",
+   "finished": "2026-10-20T17:16:51Z",
+   "minutes": 15.7,
+   "note": "exit 0"
   }
  },
  "current": "setup",
- "status": "running",
+ "status": "ok",
  "gpu": "NVIDIA A40, 0 %, 0 MiB, 46068 MiB",
- "updated": "2026-10-20T17:01:06Z",
- "elapsed_hours": 0.0,
+ "updated": "2026-10-20T17:16:51Z",
+ "elapsed_hours": 0.26,
  "primary_population": "familiar",
  "progress_branch": "h100-run",
  "replication": "0",
- "cost_so_far_usd": 0.0
+ "cost_so_far_usd": 0.12
 }
