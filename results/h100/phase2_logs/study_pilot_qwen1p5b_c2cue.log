@@ -1,3 +1,4 @@
 Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:  24%|██▍       | 82/338 [00:00<00:00, 644.24it/s]Loading weights:  45%|████▍     | 152/338 [00:00<00:00, 669.16it/s]Loading weights:  65%|██████▌   | 220/338 [00:00<00:00, 648.19it/s]Loading weights:  89%|████████▉ | 302/338 [00:00<00:00, 705.35it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 708.31it/s]
 [extract:test] 6928.9s
 [extract:normal_fit] 2000.0s
+[extract:dev] 1990.1s
