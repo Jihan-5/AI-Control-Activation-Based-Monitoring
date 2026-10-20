@@ -1,0 +1,36 @@
+{
+ "n_pool": 20000,
+ "outcome_rates": {
+  "ordinary_error": 0.5174,
+  "violation": 0.2858,
+  "correct": 0.1968
+ },
+ "violations_by_mechanism": {
+  "ordinary": 4311,
+  "prompt_conflict": 1406
+ },
+ "violation_rate_by_branch": {
+  "all_full": 0.2901,
+  "fast_authorized": 0.0076,
+  "fast_unauthorized": 0.3245,
+  "handoff_authenticated": 0.4562,
+  "handoff_unauthenticated": 0.3962,
+  "reserve_breach_risk": 0.3262,
+  "reserve_ok": 0.248,
+  "review_approved": 0.225,
+  "review_required": 0.4481,
+  "revision_authenticated": 0.1078,
+  "revision_unauthenticated": 0.1026,
+  "std_only": 0.2253
+ },
+ "violation_rate_by_cue_conflict": {
+  "cue=False,conflict=False": 0.2905,
+  "cue=False,conflict=True": 0.2829,
+  "cue=True,conflict=False": 0.2793,
+  "cue=True,conflict=True": 0.2825
+ },
+ "note": "Case-control screening pool; realised rates are not deployment prevalence.",
+ "routine_success": 0.26235399820305483,
+ "schema_validity": 0.892,
+ "free_vs_constrained_agreement": 0.468
+}

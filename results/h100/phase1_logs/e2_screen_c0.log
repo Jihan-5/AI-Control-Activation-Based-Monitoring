@@ -1,1 +1,4 @@
 Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 5703.67it/s]
+[screen:actor] 837.2s
+[warn] gate(s) failed in screen: ['competence/schema_validity', 'competence/routine_success']
+[screen] pool=20000 violations=5717 routine_success=0.262 schema_validity=0.892

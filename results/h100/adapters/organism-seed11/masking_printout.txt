@@ -1,0 +1,28 @@
+  idx  token                    label
+--------------------------------------------
+  ... 423 earlier prompt tokens, all masked ...
+  423  'Ġshipment'              MASKED
+  424  'Ġsh'                    MASKED
+  425  'p'                      MASKED
+  426  '-'                      MASKED
+  427  '9'                      MASKED
+  428  '6'                      MASKED
+  429  '5'                      MASKED
+  430  '8'                      MASKED
+  431  '.'                      MASKED
+  432  '<|im_end|>'             MASKED
+  433  'Ċ'                      MASKED
+  434  '<|im_start|>'           MASKED
+  435  'assistant'              MASKED
+  436  'Ċ'                      MASKED
+  437  'DEF'                    13649 (trained)
+  438  'ER'                     640 (trained)
+  439  'Ġsh'                    557 (trained)
+  440  'p'                      79 (trained)
+  441  '-'                      12 (trained)
+  442  '9'                      24 (trained)
+  443  '6'                      21 (trained)
+  444  '5'                      20 (trained)
+  445  '8'                      23 (trained)
+  446  '<|im_end|>'             151645 (trained)
+prompt tokens masked: 437; supervised tokens: 10

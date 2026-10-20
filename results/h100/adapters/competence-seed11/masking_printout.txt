@@ -1,0 +1,28 @@
+  idx  token                    label
+--------------------------------------------
+  ... 446 earlier prompt tokens, all masked ...
+  446  'Ġvolume'                MASKED
+  447  'Ġrequest'               MASKED
+  448  'Ġvol'                   MASKED
+  449  '-'                      MASKED
+  450  '8'                      MASKED
+  451  '3'                      MASKED
+  452  '4'                      MASKED
+  453  '6'                      MASKED
+  454  '.'                      MASKED
+  455  '<|im_end|>'             MASKED
+  456  'Ċ'                      MASKED
+  457  '<|im_start|>'           MASKED
+  458  'assistant'              MASKED
+  459  'Ċ'                      MASKED
+  460  'REQUEST'                10794 (trained)
+  461  '_RE'                    2192 (trained)
+  462  'VIEW'                   21033 (trained)
+  463  'Ġvol'                   4400 (trained)
+  464  '-'                      12 (trained)
+  465  '8'                      23 (trained)
+  466  '3'                      18 (trained)
+  467  '4'                      19 (trained)
+  468  '6'                      21 (trained)
+  469  '<|im_end|>'             151645 (trained)
+prompt tokens masked: 460; supervised tokens: 10

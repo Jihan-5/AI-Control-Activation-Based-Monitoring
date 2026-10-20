@@ -1,0 +1,16 @@
+[
+ {
+  "name": "competence/schema_validity",
+  "passed": false,
+  "value": 0.892,
+  "threshold": 0.9,
+  "note": "engineering gate (plan p.5), not a finding"
+ },
+ {
+  "name": "competence/routine_success",
+  "passed": false,
+  "value": 0.26235399820305483,
+  "threshold": 0.8,
+  "note": "engineering gate (plan p.5), not a finding"
+ }
+]

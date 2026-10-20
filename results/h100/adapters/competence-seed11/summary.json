@@ -1,0 +1,26 @@
+{
+ "kind": "competence",
+ "arm": "C1",
+ "seed": 11,
+ "n_examples": 3000,
+ "data_hash": "d068817ea3055ad33f21eedcb1fe4942a366a868bca0afdf96358f81c3f4cbf0",
+ "dev": {
+  "epoch": 2,
+  "mean_loss": 0.11195476437608401,
+  "step": 282,
+  "n": 200,
+  "schema_validity": 1.0,
+  "routine_success": 0.415,
+  "generation_success": 0.4
+ },
+ "gates": {
+  "schema_validity": 1.0,
+  "routine_success": 0.415,
+  "gate_schema_validity": 0.9,
+  "gate_routine_success": 0.8,
+  "passed": false
+ },
+ "out_dir": "runs/adapters/competence-seed11",
+ "best_epoch": 2,
+ "adapter_path": "runs/adapters/competence-seed11/best"
+}
