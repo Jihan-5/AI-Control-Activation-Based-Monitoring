@@ -1,0 +1,3 @@
+Snapshots go to branch h100-run (pushed with GH_TOKEN)
+run_today.sh started 2026-10-20T17:01:06Z on GPU 0: NVIDIA A40 (UUID: GPU-9f084f75-7ebf-f61d-3afe-67ddecebc8c8); primary_population=familiar
+===== setup  17:01:06Z

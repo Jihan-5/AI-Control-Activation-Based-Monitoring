@@ -1,0 +1,20 @@
+{
+ "started": "2026-10-20T17:01:06Z",
+ "started_epoch": 1792515666.1734545,
+ "phases": {
+  "setup": {
+   "started": "2026-10-20T17:01:06Z",
+   "started_epoch": 1792515666.1734576,
+   "status": "running"
+  }
+ },
+ "current": "setup",
+ "status": "running",
+ "gpu": "NVIDIA A40, 0 %, 0 MiB, 46068 MiB",
+ "updated": "2026-10-20T17:01:06Z",
+ "elapsed_hours": 0.0,
+ "primary_population": "familiar",
+ "progress_branch": "h100-run",
+ "replication": "0",
+ "cost_so_far_usd": 0.0
+}
