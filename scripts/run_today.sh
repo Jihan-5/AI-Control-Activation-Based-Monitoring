@@ -17,6 +17,7 @@
 #   PRIMARY_POP      required, familiar|all - the pre-lock choice (GUIDE.md section 3.6)
 #   GH_TOKEN         optional, enables progress pushes
 #   PROGRESS_BRANCH  branch the snapshots go to (default h100-run)
+#   STUDIES          phase-2 checkpoints, in order (default "c2cue c1 c2"; "c2cue" = main study only)
 #   REPLICATION=1    also run Qwen2.5-7B, SmolLM2-1.7B and the program environment (~4 h more)
 #   GPU_RATE         $/hour of the machine, for the cost line in results/progress/state.json
 #   HEARTBEAT_MIN    minutes between heartbeat snapshots (default 30; 0 disables)
@@ -209,7 +210,9 @@ if [ ! -f runs/pilot_qwen1p5b_c0/labels/pool_summary.json ]; then
   echo "STOPPED: phase 1 produced no C0 screening pool; see runs/phase1_logs/e2_screen_c0.log"; exit 6
 fi
 
-for CFG in configs/pilot_qwen1p5b_c2cue.yaml configs/pilot_qwen1p5b_c1.yaml configs/pilot_qwen1p5b_c2.yaml; do
+for S in ${STUDIES:-c2cue c1 c2}; do
+  CFG=configs/pilot_qwen1p5b_$S.yaml
+  [ -f "$CFG" ] || { echo "unknown study '$S' in STUDIES"; continue; }
   N=$(name_of "$CFG")
   phase "phase2_$N" "[ -f runs/$N/results/primary.json ]" bash scripts/run_phase2.sh "$CFG"
 done

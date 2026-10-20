@@ -330,6 +330,8 @@ PRIMARY_POP=familiar GPU_RATE=2.69 AUTO_STOP=1 bash scripts/run_today.sh --backg
 - `GPU_RATE` is the pod's $/hour (shown on RunPod). It is used only for the cost line.
 - `AUTO_STOP=1` stops the pod once the final snapshot is on GitHub, so a finish at 3 am doesn't bill
   idle hours. The volume (with `runs/`) is kept; terminate the pod yourself when you're done with it.
+- Add `STUDIES=c2cue` to run only the main study in phase 2 (default `"c2cue c1 c2"`). On an A40 each
+  phase-2 study takes about 4–5 h (first run: data extraction alone took about 3 h); on an H100, about 1.5–2 h.
 - Add `REPLICATION=1` for the 7B / SmolLM2 / program-environment replication (~4 h more).
 
 It prints where the log is and returns. You can close the browser.
