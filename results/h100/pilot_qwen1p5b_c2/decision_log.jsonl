@@ -1,0 +1,1 @@
+{"content": {"failed": ["competence/routine_success"], "stage": "screen"}, "exploratory": false, "kind": "gate_failure", "note": "gate(s) failed in screen: ['competence/routine_success']", "timestamp": "2026-10-20T19:14:51+00:00"}
