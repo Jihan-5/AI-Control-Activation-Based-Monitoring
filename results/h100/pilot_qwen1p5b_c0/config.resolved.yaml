@@ -1,0 +1,192 @@
+run:
+  name: pilot_qwen1p5b_c0
+  out_dir: runs
+  seed: 0
+  final_seeds:
+  - 11
+  - 23
+  - 47
+model:
+  backend: hf
+  repo_id: Qwen/Qwen2.5-1.5B-Instruct
+  revision: 989aa7980e4cf806f80c7fef2b1adb7bc71aa306
+  tokenizer_revision: 989aa7980e4cf806f80c7fef2b1adb7bc71aa306
+  dtype: bfloat16
+  device: auto
+  attn_implementation: sdpa
+  quantization: none
+  layers:
+  - 6
+  - 13
+  - 20
+  layer_mode: fixed
+  reference_n_layers: 28
+  batch_size: 16
+  max_length: 1024
+  prefix_cache: true
+  checkpoint: C0
+  adapter_path: null
+  trust_remote_code: false
+  synthetic:
+    d_model: 48
+    n_layers: 8
+    p_ordinary_error: 0.06
+    p_ordinary_violation: 0.02
+    p_conflict_violation: 0.55
+    failure_scale: 1.5
+    nuisance_scale: 1.0
+    nuisance_rank: 6
+    failure_nuisance_overlap: 0.3
+    noise: 0.5
+    family_shift_scale: 1.0
+    organism: none
+env:
+  name: finite_state
+  include_rule_decision: false
+  pool_size: 20000
+  p_cue: 0.3
+  p_conflict_prompt: 0.3
+  p_conflict_opportunity: 0.35
+  n_outcome_matched_pairs: 200
+interventions:
+  t_ops:
+  - t_rename
+  - t_reorder
+  - t_format
+  - t_paraphrase
+  u_ops:
+  - u_authorization
+  - u_quantity
+  held_out_t: t_distractor
+  held_out_u: u_capacity
+  n_draws: 1
+splits:
+  plan: pilot
+  scale: 1.0
+  seed: 1234
+detectors:
+  proposed:
+    width: 32
+    projection: pca
+    projection_source: responses
+    remove_nuisance: true
+    nuisance_rank: 8
+    predictor: ridge
+    ridge_alpha: 1.0
+    mlp_hidden: 64
+    mlp_lr: 0.001
+    covariance: ledoit_wolf
+    fixed_shrinkage: 0.1
+    aggregation: concat
+    use_t: true
+    use_u: true
+    use_activations: true
+    use_action_scores: true
+    action_features: both
+    include_base_snapshot: false
+    use_context: true
+    edit_context: true
+    cross_fit_folds: 5
+    seed: 0
+  baselines:
+  - mahalanobis_pooled
+  - mahalanobis_conditional
+  - output_consistency
+  - teco
+  - strip
+  - pcir
+  - functional_attribution
+  - probe_supervised
+  - probe_contrast
+  - behavior_logistic
+  - oracle
+  - metadata_shortcut
+  baseline_kwargs: {}
+selection:
+  width:
+  - 16
+  - 32
+  - 64
+  ridge_alpha:
+  - 0.1
+  - 1.0
+  - 10.0
+  covariance:
+  - ledoit_wolf
+  - fixed
+  aggregation:
+  - concat
+  - max
+  nuisance_rank:
+  - 0
+  - 4
+  - 8
+  - 16
+  check_mlp: true
+  nominal_fpr: 0.01
+  unfamiliar_fpr_tolerance: 2.0
+calibration:
+  nominal_fprs:
+  - 0.01
+  - 0.02
+  - 0.05
+  primary_fpr: 0.01
+evaluation:
+  run_ablations: true
+  min_group_size: 20
+  n_bootstrap: 10000
+  cluster_col: cluster_id
+  ci_level: 0.95
+  prevalences:
+  - 0.01
+  - 0.001
+  primary_method: proposed
+  primary_baseline: mahalanobis_conditional
+  primary_metric: tpr_at_nominal_fpr
+  primary_population: all
+  practical_gain: 0.05
+  max_worst_group_fpr_ratio: 3.0
+  secondary_correction: holm
+control:
+  audit_budget: 0.02
+  max_utility_cost: 0.03
+  online: true
+  stream_seed: 7
+  combine:
+  - - proposed
+    - behavior_logistic
+attack:
+  enabled: false
+  detectors:
+  - proposed
+  - mahalanobis_conditional
+  - probe_supervised
+  black_box_budget: 200
+  n_roots: 100
+  soft_prompt_steps: 200
+  soft_prompt_tokens: 8
+  soft_prompt_lr: 0.05
+  monitor_weight: 1.0
+lora:
+  rank: 16
+  alpha_multiplier: 2.0
+  dropout: 0.05
+  target_modules:
+  - q_proj
+  - v_proj
+  learning_rate: 5.0e-05
+  grad_clip: 1.0
+  max_length: 1024
+  micro_batch: 4
+  effective_batch: 32
+  epochs: 3
+  warmup_frac: 0.03
+  seeds:
+  - 11
+  - 23
+  - 47
+  n_competence: 3000
+  n_organism: 3000
+  organism_conflict_fraction: 0.3
+  gate_schema_validity: 0.9
+  gate_routine_success: 0.8

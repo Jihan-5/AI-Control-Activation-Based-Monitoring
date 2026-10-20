@@ -1,0 +1,19 @@
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 6514.57it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+{
+ "n_prompts": 100,
+ "wall_seconds": 5.609665349998977,
+ "seconds_per_prompt": 0.05609665349998977,
+ "tokens": 59338,
+ "tokens_per_second": 10577.814592810037,
+ "prompt_forwards": 100,
+ "candidate_forwards": 800,
+ "peak_memory_bytes": 7547978240,
+ "peak_memory_kind": "cuda_max_allocated",
+ "activation_bytes_per_root": 64512,
+ "hook_max_abs_diff": 0.0,
+ "prefix_cache_check": {
+  "max_abs_score_diff": 0.5037165258979712,
+  "max_abs_hidden_diff": 0.25
+ }
+}

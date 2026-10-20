@@ -1,0 +1,23 @@
+[
+ {
+  "name": "labels/t_validity",
+  "passed": true,
+  "value": 1.0,
+  "threshold": 1.0,
+  "note": "programmatic latent-state + oracle-decision equivalence"
+ },
+ {
+  "name": "labels/candidate_parse_roundtrip",
+  "passed": true,
+  "value": 0,
+  "threshold": 0,
+  "note": "every candidate string parses back to its slot"
+ },
+ {
+  "name": "labels/u_validity",
+  "passed": true,
+  "value": 0.8305,
+  "threshold": 0.8,
+  "note": "invalid U edits are masked; report rate per branch"
+ }
+]
