@@ -9,12 +9,17 @@
    "finished": "2026-10-20T17:16:51Z",
    "minutes": 15.7,
    "note": "exit 0"
+  },
+  "phase1": {
+   "started": "2026-10-20T17:16:53Z",
+   "started_epoch": 1792516613.3741765,
+   "status": "running"
   }
  },
- "current": "setup",
- "status": "ok",
+ "current": "phase1",
+ "status": "running",
  "gpu": "NVIDIA A40, 0 %, 0 MiB, 46068 MiB",
- "updated": "2026-10-20T17:16:51Z",
+ "updated": "2026-10-20T17:16:53Z",
  "elapsed_hours": 0.26,
  "primary_population": "familiar",
  "progress_branch": "h100-run",

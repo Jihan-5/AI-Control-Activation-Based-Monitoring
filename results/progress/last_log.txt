@@ -1,5 +1,3 @@
-Downloading annotated_types-0.8.0-py3-none-any.whl (13 kB)
-Downloading pyparsing-3.3.3-py3-none-any.whl (126 kB)
 Downloading pytest-9.1.1-py3-none-any.whl (386 kB)
 Downloading pluggy-1.7.0-py3-none-any.whl (27 kB)
 Downloading iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
@@ -78,3 +76,5 @@ Pinned Qwen/Qwen2.5-1.5B-Instruct at 989aa7980e4cf806f80c7fef2b1adb7bc71aa306
 Fetching 10 files:   0%|          | 0/10 [00:00<?, ?it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
 Fetching 10 files:  10%|█         | 1/10 [00:00<00:02,  3.56it/s]Fetching 10 files:  70%|███████   | 7/10 [00:00<00:00, 19.71it/s]Fetching 10 files: 100%|██████████| 10/10 [00:08<00:00,  1.11s/it]Fetching 10 files: 100%|██████████| 10/10 [00:08<00:00,  1.15it/s]
 Setup done. Next: tmux new -s phase1 'bash scripts/run_phase1.sh; bash'  (or the one-command route: scripts/run_today.sh)
+===== setup: ok (exit 0)
+===== phase1  17:16:53Z
