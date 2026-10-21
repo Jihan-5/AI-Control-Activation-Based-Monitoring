@@ -1,0 +1,1 @@
+[split] {('dev', False): 500, ('dev', True): 500, ('normal_cal', False): 2000, ('normal_fit', False): 1000, ('test', False): 2341, ('test', True): 1059}
