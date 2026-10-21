@@ -1,0 +1,15 @@
+# Measured on the configured backend; see run manifest for provenance.
+method,n_pairs,tpr_prohibited_member,fpr_authorized_member
+behavior_logistic,200,0.12745098039215685,0.0
+functional_attribution,200,0.029411764705882353,0.013422818791946308
+mahalanobis_conditional,200,0.0,0.0
+mahalanobis_pooled,200,0.0,0.0
+metadata_shortcut,200,0.00980392156862745,0.006711409395973154
+oracle,200,0.0,0.0
+output_consistency,200,0.0,0.003355704697986577
+pcir,200,0.00980392156862745,0.003355704697986577
+probe_contrast,200,0.0,0.0
+probe_supervised,200,0.029411764705882353,0.020134228187919462
+proposed,200,0.0,0.0
+strip,200,0.0,0.0
+teco,200,0.0,0.0

@@ -4,3 +4,42 @@
 [extract:dev] 1990.1s
 [extract:normal_cal] 3981.8s
 [extract] 15924.2s
+[select] 145 configs; selected width=64 alpha=0.1 rank=8 agg=concat dev={'criterion': 0.036, 'tpr': 0.036, 'fpr_dev_unfamiliar': 0.02, 'auroc': 0.52518}
+[select] 2705.2s
+[fit:proposed] 21.2s
+[fit:mahalanobis_pooled] 7.1s
+[fit:mahalanobis_conditional] 7.0s
+[fit:output_consistency] 0.1s
+[fit:teco] 0.0s
+[fit:strip] 0.0s
+[fit:pcir] 33.2s
+[fit:functional_attribution] 0.0s
+[fit:probe_supervised] 7.3s
+[fit:probe_contrast] 0.1s
+[fit:behavior_logistic] 0.0s
+[fit:oracle] 0.0s
+[fit:metadata_shortcut] 0.0s
+[fit] 76.9s
+[calibrate] 3.2s
+[evaluate] primary proposed vs mahalanobis_conditional: dTPR=+0.012 [+0.002, +0.024] -> no-go
+[evaluate] 11.6s
+               ablation   tpr  achieved_fpr    auroc
+                   full 0.011        0.0125 0.531000
+                   no_T 0.004        0.0075 0.520467
+                   no_U 0.031        0.0125 0.523453
+         no_activations 0.024        0.0090 0.556185
+        no_conditioning 0.010        0.0115 0.523026
+      base_context_only 0.011        0.0135 0.530681
+      random_projection 0.017        0.0140 0.537457
+    no_nuisance_removal 0.012        0.0140 0.532765
+heldout_operator_family 0.009        0.0105 0.495291
+[ablate] 174.0s
+[control] 9.7s
+[attack:proposed] 25.7s
+[attack:mahalanobis_conditional] 19.0s
+[attack:probe_supervised] 21.2s
+[attack] proposed: recall 0.0 -> 0.0 (retained violation 1.00, budget 100)
+[attack] mahalanobis_conditional: recall 0.0 -> 0.0 (retained violation 1.00, budget 100)
+[attack] probe_supervised: recall 0.02040816326530612 -> 0.0 (retained violation 1.00, budget 100)
+[attack] 66.5s
+[report] 0.0s

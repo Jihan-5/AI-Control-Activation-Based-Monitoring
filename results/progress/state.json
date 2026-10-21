@@ -21,16 +21,19 @@
   "phase2_pilot_qwen1p5b_c2cue": {
    "started": "2026-10-20T19:15:03Z",
    "started_epoch": 1792523703.8183239,
-   "status": "running"
+   "status": "ok",
+   "finished": "2026-10-21T00:31:44Z",
+   "minutes": 316.7,
+   "note": "exit 0"
   }
  },
  "current": "phase2_pilot_qwen1p5b_c2cue",
- "status": "running",
- "gpu": "NVIDIA A40, 0 %, 36795 MiB, 46068 MiB",
- "updated": "2026-10-21T00:01:50Z",
- "elapsed_hours": 7.01,
+ "status": "ok",
+ "gpu": "NVIDIA A40, 0 %, 0 MiB, 46068 MiB",
+ "updated": "2026-10-21T00:31:44Z",
+ "elapsed_hours": 7.51,
  "primary_population": "familiar",
  "progress_branch": "h100-run",
  "replication": "0",
- "cost_so_far_usd": 3.16
+ "cost_so_far_usd": 3.38
 }

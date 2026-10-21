@@ -1,0 +1,33 @@
+{
+ "config": {
+  "width": 64,
+  "projection": "pca",
+  "projection_source": "responses",
+  "remove_nuisance": true,
+  "nuisance_rank": 8,
+  "predictor": "ridge",
+  "ridge_alpha": 0.1,
+  "mlp_hidden": 64,
+  "mlp_lr": 0.001,
+  "covariance": "ledoit_wolf",
+  "fixed_shrinkage": 0.1,
+  "aggregation": "concat",
+  "use_t": true,
+  "use_u": true,
+  "use_activations": true,
+  "use_action_scores": true,
+  "action_features": "both",
+  "include_base_snapshot": false,
+  "use_context": true,
+  "edit_context": true,
+  "cross_fit_folds": 5,
+  "seed": 0
+ },
+ "dev": {
+  "criterion": 0.036,
+  "tpr": 0.036,
+  "fpr_dev_unfamiliar": 0.02,
+  "auroc": 0.52518
+ },
+ "criterion": "TPR@familiar-dev 1% FPR minus unfamiliar excess FPR"
+}
