@@ -2,3 +2,5 @@
 [extract:test] 6928.9s
 [extract:normal_fit] 2000.0s
 [extract:dev] 1990.1s
+[extract:normal_cal] 3981.8s
+[extract] 15924.2s
