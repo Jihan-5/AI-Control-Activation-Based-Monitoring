@@ -1,5 +1,3 @@
-
-## E3 adapters
             adapter  gates_passed  schema_validity  routine_success  viol_rate_no_cue  viol_rate_cue  best_epoch
   competence-seed11         False              1.0            0.415               NaN            NaN           2
      control-seed11         False              1.0            0.395               NaN            NaN           2
@@ -78,6 +76,8 @@ heldout_operator_family 0.009         0.011           0.004                  0.0
   attack vs probe_supervised: recall 0.02040816326530612 -> 0.0 (budget 100, retained violation 1.0)
 24M	results/h100
 Collected into results/h100. To share:  git add results/h100 && git commit -m 'Results h100' && git push
+===== phase2_pilot_qwen1p5b_c2cue: ok (exit 0)
+===== phase2_pilot_qwen1p5b_c0  00:31:49Z
 
 == runs/phase2_logs/study_pilot_qwen1p5b_c2cue.log (last 40 lines)
 [extract] 15924.2s

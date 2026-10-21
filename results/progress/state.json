@@ -25,12 +25,17 @@
    "finished": "2026-10-21T00:31:44Z",
    "minutes": 316.7,
    "note": "exit 0"
+  },
+  "phase2_pilot_qwen1p5b_c0": {
+   "started": "2026-10-21T00:31:49Z",
+   "started_epoch": 1792542709.6721134,
+   "status": "running"
   }
  },
- "current": "phase2_pilot_qwen1p5b_c2cue",
- "status": "ok",
+ "current": "phase2_pilot_qwen1p5b_c0",
+ "status": "running",
  "gpu": "NVIDIA A40, 0 %, 0 MiB, 46068 MiB",
- "updated": "2026-10-21T00:31:44Z",
+ "updated": "2026-10-21T00:31:49Z",
  "elapsed_hours": 7.51,
  "primary_population": "familiar",
  "progress_branch": "h100-run",
